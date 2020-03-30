@@ -1,12 +1,10 @@
 package me.kenny.main;
 
 import me.kenny.main.lootbox.LootboxCommand;
-import me.kenny.main.lootbox.LootboxGUI;
 import me.kenny.main.lootbox.LootboxLootConstructor;
-import me.kenny.main.lootbox.LootboxOpen;
+import me.kenny.main.lootbox.LootboxOpenListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,8 +19,7 @@ public class Main extends JavaPlugin {
         lootboxName = ChatColor.translateAlternateColorCodes('&', getConfig().getString("name"));
         lootboxLore = ChatColor.translateAlternateColorCodes('&', getConfig().getString("lore"));
 
-        Bukkit.getPluginManager().registerEvents(new LootboxOpen(this), this);
-        Bukkit.getPluginManager().registerEvents(new LootboxLootConstructor(this), this);
+        Bukkit.getPluginManager().registerEvents(new LootboxOpenListener(this), this);
 
         Bukkit.getPluginCommand("lootbox").setExecutor(new LootboxCommand(this));
     }
