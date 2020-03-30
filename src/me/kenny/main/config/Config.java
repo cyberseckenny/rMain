@@ -22,9 +22,16 @@ public abstract class Config {
     }
 
     private void getConfig() {
-        file = new File(main.getDataFolder().getPath(), name + ".yml");
-        fileConfiguration = new YamlConfiguration();
+        file = new File(main.getDataFolder(), name + ".yml");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
+        fileConfiguration = new YamlConfiguration();
         try {
             fileConfiguration.load(file);
         } catch (IOException | InvalidConfigurationException e) {
@@ -40,7 +47,11 @@ public abstract class Config {
         return fileConfiguration;
     }
 
-    public void save() throws IOException {
-        fileConfiguration.save(file);
+    public void save() {
+        try {
+            fileConfiguration.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

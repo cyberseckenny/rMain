@@ -1,6 +1,7 @@
 package me.kenny.main.lootbox;
 
 import me.kenny.main.Main;
+import me.kenny.main.util.Info;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,7 +28,7 @@ public class LootboxOpenListener implements Listener {
             if (main.isLootbox(clicked.getItemMeta())) {
                 new LootboxGUI(main, player);
                 player.getInventory().removeItem(clicked);
-                player.sendMessage(ChatColor.GRAY + "[" + main.getLootboxName() + ChatColor.GRAY + "]" + ChatColor.RESET + " Opening lootbox.");
+                player.sendMessage(Info.lootboxes(main, "Opening lootbox."));
                 event.setCancelled(true);
             }
         }

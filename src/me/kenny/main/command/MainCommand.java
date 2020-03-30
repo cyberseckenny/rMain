@@ -1,6 +1,7 @@
 package me.kenny.main.command;
 
 import me.kenny.main.Main;
+import me.kenny.main.util.Info;
 import net.minecraft.util.org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -40,11 +41,21 @@ public class MainCommand implements CommandExecutor  {
                         meta.setDisplayName(main.getLootboxName());
                         meta.setLore(Arrays.asList(main.getLootboxLore()));
                         lootbox.setItemMeta(meta);
+
                         player.getInventory().addItem(lootbox);
-                        player.sendMessage(ChatColor.GRAY + "[" + main.getLootboxName() + ChatColor.RESET + "]" + ChatColor.WHITE + " Gifted you a " + main.getLootboxName() + ChatColor.RESET + ".");
-                    case "addLoot":
-                        // TODO: add loot command
+                        player.sendMessage(Info.main(main, "Gifted you a " + main.getLootboxName() + ChatColor.RESET + "."));
                         break;
+                    case "addloot":
+                        if (player.getInventory().getItemInHand() == null || player.getInventory().getItemInHand().getType() == Material.AIR) {
+                            player.sendMessage(ChatColor.RED + "You must be holding an item in your hand to add loot!");
+                            return true;
+                        } else {
+                            ItemStack item = player.getInventory().getItemInHand();
+                            int key = main.getLootConfig().addLoot(item);
+                            String name = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : ChatColor.RED + item.getType().toString();
+                            player.sendMessage(Info.main(main, "Sucessfully added " + name + ChatColor.RESET + " to loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + "."));
+                            break;
+                        }
                     default:
                         help(player);
                         break;
@@ -56,7 +67,7 @@ public class MainCommand implements CommandExecutor  {
 
     public void help(Player player) {
         player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + StringUtils.repeat("-", 40));
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4&lCommands"));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&lMain Commands"));
         player.sendMessage(" ");
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main giveLootbox &eGives you a lootbox."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main addLoot <true/false> &eAdds your current held item to the loot table. If true, the item will be considered rare and will only appear in the ender chest when used in lootboxes."));
