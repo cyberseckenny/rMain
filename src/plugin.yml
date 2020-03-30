@@ -4,4 +4,4 @@ author: Kenny
 main: me.kenny.main.Main
 version: 0.1
 commands:
-  lootbox:
+  main:

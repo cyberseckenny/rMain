@@ -1,7 +1,6 @@
 package me.kenny.main;
 
-import me.kenny.main.lootbox.LootboxCommand;
-import me.kenny.main.lootbox.LootboxLootConstructor;
+import me.kenny.main.command.MainCommand;
 import me.kenny.main.lootbox.LootboxOpenListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,7 +20,7 @@ public class Main extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new LootboxOpenListener(this), this);
 
-        Bukkit.getPluginCommand("lootbox").setExecutor(new LootboxCommand(this));
+        Bukkit.getPluginCommand("main").setExecutor(new MainCommand(this));
     }
 
     public String getLootboxName() {

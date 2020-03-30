@@ -27,7 +27,7 @@ public class LootboxOpenListener implements Listener {
             if (main.isLootbox(clicked.getItemMeta())) {
                 new LootboxGUI(main, player);
                 player.getInventory().removeItem(clicked);
-                player.sendMessage(ChatColor.GRAY + "[" + main.getLootboxName() + ChatColor.GRAY + "]" + ChatColor.WHITE + " Opening lootbox.");
+                player.sendMessage(ChatColor.GRAY + "[" + main.getLootboxName() + ChatColor.GRAY + "]" + ChatColor.RESET + " Opening lootbox.");
                 event.setCancelled(true);
             }
         }
