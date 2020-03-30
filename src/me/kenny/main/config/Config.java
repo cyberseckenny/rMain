@@ -8,7 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-public class Config {
+public abstract class Config {
     private Main main;
     private String name;
     private File file;
@@ -30,6 +30,14 @@ public class Config {
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public FileConfiguration getFileConfiguration() {
+        return fileConfiguration;
     }
 
     public void save() throws IOException {
