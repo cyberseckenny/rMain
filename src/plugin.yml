@@ -3,3 +3,5 @@ description: Lootboxes, crates, and gkit plugin for HCRuins
 author: Kenny
 main: me.kenny.main.Main
 version: 0.1
+commands:
+  lootbox:
