@@ -25,12 +25,13 @@ public class LootboxListener implements Listener {
 
             if (clicked != null && clicked.getItemMeta() != null && main.isLootbox(clicked.getItemMeta())) {
                 new LootboxGui(main, player);
-                player.getInventory().removeItem(clicked);
+                removeOne(player, clicked);
                 player.sendMessage(Info.lootboxes(main, "Opening lootbox."));
                 event.setCancelled(true);
             }
         }
     }
+
     @EventHandler
     public void onLootboxGuiClick(InventoryClickEvent event) {
         if (event.getInventory().getTitle().equals(main.getLootboxName()))
@@ -38,10 +39,18 @@ public class LootboxListener implements Listener {
 
         if (event.getCurrentItem() != null) {
             ItemStack clicked = event.getCurrentItem();
-            if (main.isLootbox(clicked.getItemMeta())) {
+            if (clicked.getItemMeta() != null && main.isLootbox(clicked.getItemMeta())) {
 
             }
         }
     }
 
+    // only removes one from an
+    public void removeOne(Player player, ItemStack item) {
+        if (item.getAmount() > 1) {
+            item.setAmount(item.getAmount() - 1);
+        } else {
+            player.getInventory().removeItem(item);
+        }
+    }
 }
