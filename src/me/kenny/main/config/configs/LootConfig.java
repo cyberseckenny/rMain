@@ -11,24 +11,27 @@ public class LootConfig extends Config {
         super(main, "loot");
     }
 
-    public Integer addLoot(ItemStack item) {
+    public Integer addLoot(ItemStack item, boolean rare) {
         int nextKey = getNextKey();
-        getFileConfiguration().set(Integer.valueOf(nextKey).toString(), item.serialize());
+        getFileConfiguration().set(Integer.valueOf(nextKey).toString() + ".item", item.serialize());
+        getFileConfiguration().set(Integer.valueOf(nextKey).toString() + ".rare", rare);
         save();
 
         return nextKey;
     }
 
-    public void removeLoot(ItemStack item) {
+    public Integer removeLoot(ItemStack item) {
         for (String path : getFileConfiguration().getKeys(true)) {
-            if (getFileConfiguration().getItemStack(path).equals(item.serialize())) {
+            if (getFileConfiguration().getItemStack(path + ".item").isSimilar(item)) {
                 getFileConfiguration().set(path, null);
+                return Integer.parseInt(path);
             }
         }
+        return -1;
     }
 
     // each loot will be stored in increments of 1, and this gets the next available one
     public Integer getNextKey() {
-        return getFileConfiguration().getKeys(true).size() + 1;
+        return getFileConfiguration().getKeys(false).size() + 1;
     }
 }

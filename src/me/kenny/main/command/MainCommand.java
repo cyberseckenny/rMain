@@ -50,11 +50,17 @@ public class MainCommand implements CommandExecutor  {
                             player.sendMessage(ChatColor.RED + "You must be holding an item in your hand to add loot!");
                             return true;
                         } else {
-                            ItemStack item = player.getInventory().getItemInHand();
-                            int key = main.getLootConfig().addLoot(item);
-                            String name = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : ChatColor.RED + item.getType().toString();
-                            player.sendMessage(Info.main(main, "Sucessfully added " + name + ChatColor.RESET + " to loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + "."));
-                            break;
+                            if (args.length == 1 || !isBoolean(args[1])) {
+                                player.sendMessage(ChatColor.RED + "You must specify true or false!");
+                                return true;
+                            } else {
+                                boolean rare = Boolean.parseBoolean(args[1]);
+                                ItemStack item = player.getInventory().getItemInHand();
+                                int key = main.getLootConfig().addLoot(item, rare);
+                                String name = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : ChatColor.RED + item.getType().toString();
+                                player.sendMessage(Info.main(main, "Sucessfully added " + name + ChatColor.RESET + " to loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + ". (rare: " + ChatColor.RED + rare + ChatColor.RESET + ")"));
+                                break;
+                            }
                         }
                     default:
                         help(player);
@@ -65,12 +71,19 @@ public class MainCommand implements CommandExecutor  {
         return true;
     }
 
+    // checks if the string is true or false
+    public boolean isBoolean(String string) {
+        if (string.equals("true") || string.equalsIgnoreCase("false"))
+            return true;
+        return false;
+    }
+
     public void help(Player player) {
         player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + StringUtils.repeat("-", 40));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&lMain Commands"));
         player.sendMessage(" ");
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main giveLootbox &eGives you a lootbox."));
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main addLoot <true/false> &eAdds your current held item to the loot table. If true, the item will be considered rare and will only appear in the ender chest when used in lootboxes."));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main addLoot <true/false> &eAdds your current held item to the loot table. If true, the item will be considered rare and if used in lootboxes it will only appear in the ender chest."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main removeLoot &eRemoves your current held item from the loot table. NOTE: The item must be identical to the item in the loot table."));
         player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + StringUtils.repeat("-", 40));
     }
