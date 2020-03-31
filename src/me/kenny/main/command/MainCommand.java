@@ -89,6 +89,10 @@ public class MainCommand implements CommandExecutor  {
                     case "viewloot":
                         new LootTableGui(main, player);
                         break;
+                    case "reload":
+                        main.setupConfig();
+                        player.sendMessage(Info.main(main, "Reloaded configs."));
+                        break;
                     default:
                         help(player);
                         break;
@@ -118,6 +122,7 @@ public class MainCommand implements CommandExecutor  {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main addLoot <true/false> &eAdds your current held item to the loot table. If true, the item will be considered rare and if used in lootboxes it will only appear in the ender chest."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main removeLoot &eRemoves your current held item from the loot table. NOTE: The item must be identical to the item in the loot table."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main viewLoot &eViews the current loot table. You can also add and remove items from the loot table by dragging and dropping items from the gui."));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main reload &eReloads plugin config files."));
         player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + StringUtils.repeat("-", 40));
     }
 }

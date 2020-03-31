@@ -19,8 +19,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         this.saveDefaultConfig();
 
-        lootboxName = ChatColor.translateAlternateColorCodes('&', getConfig().getString("name"));
-        lootboxLore = ChatColor.translateAlternateColorCodes('&', getConfig().getString("lore"));
+        setupConfig();
 
         lootConfig = new LootConfig(this);
 
@@ -49,5 +48,11 @@ public class Main extends JavaPlugin {
             }
         }
         return false;
+    }
+
+    public void setupConfig() {
+        this.reloadConfig();
+        lootboxName = ChatColor.translateAlternateColorCodes('&', getConfig().getString("lootbox-name"));
+        lootboxLore = ChatColor.translateAlternateColorCodes('&', getConfig().getString("lootbox-lore"));
     }
 }
