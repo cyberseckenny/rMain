@@ -12,16 +12,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 
-public class LootboxGUI {
+public class LootboxGui {
     private Main main;
 
-    public LootboxGUI(Main main, Player player) {
+    public LootboxGui(Main main, Player player) {
         this.main = main;
 
-        player.openInventory(getGUI());
+        player.openInventory(getGui());
     }
 
-    public Inventory getGUI() {
+    public Inventory getGui() {
         int size = 54;
         // won't place borders if the index is one of these
         int[] center = {12, 13, 14, 21, 22, 23, 30, 31, 32, 40};

@@ -50,7 +50,10 @@ public abstract class Config {
     public void save() {
         try {
             fileConfiguration.save(file);
+            fileConfiguration.load(file);
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }
