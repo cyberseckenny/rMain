@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 public abstract class Config {
-    private Main main;
+    public Main main;
     private String name;
     private File file;
     private FileConfiguration fileConfiguration;

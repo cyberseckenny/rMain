@@ -87,7 +87,7 @@ public class MainCommand implements CommandExecutor  {
                         }
                         break;
                     case "viewloot":
-                        new LootTableGui(main, player);
+                        player.openInventory(new LootTableGui(main, player).getGui());
                         break;
                     case "reload":
                         main.setupConfig();

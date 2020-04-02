@@ -2,9 +2,13 @@ package me.kenny.main.config.configs;
 
 import me.kenny.main.Main;
 import me.kenny.main.config.Config;
+import me.kenny.main.lootbox.LootTableGui;
+import me.kenny.main.util.EditingPlayerHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
@@ -23,11 +27,14 @@ public class LootConfig extends Config {
         save();
 
         reorganize();
+        updateLootGui();
 
         return nextKey;
     }
 
     public Integer removeLoot(ItemStack item) {
+        updateLootGui();
+
         for (String path : getFileConfiguration().getKeys(false)) {
             ItemStack configItem = ItemStack.deserialize(getFileConfiguration().getConfigurationSection(path + ".item").getValues(true));
             if (configItem.isSimilar(item)) {
@@ -36,6 +43,7 @@ public class LootConfig extends Config {
                 return Integer.parseInt(path);
             }
         }
+
         return -1;
     }
 
@@ -101,6 +109,13 @@ public class LootConfig extends Config {
         }
 
         save();
+    }
+
+    private void updateLootGui() {
+        Bukkit.broadcastMessage(main.getEditingPlayerHandler().getEditing(EditingPlayerHandler.EditingType.LOOT_TABLE_GUI) + "");
+        for (Player player : main.getEditingPlayerHandler().getEditing(EditingPlayerHandler.EditingType.LOOT_TABLE_GUI)) {
+            player.getOpenInventory().getTopInventory().setContents(new LootTableGui(main, player).getGui().getContents());
+        }
     }
 
     private void clearConfig() {

@@ -14,7 +14,6 @@ public class LootTableGui {
 
     public LootTableGui(Main main, Player player) {
         this.main = main;
-        player.openInventory(getGui());
     }
 
     public Inventory getGui() {

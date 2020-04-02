@@ -9,17 +9,16 @@ import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LootTableListener implements Listener {
     private Main main;
+    private List<Player> currentlyEditing = new ArrayList<>();
 
     public LootTableListener(Main main) {
         this.main = main;
@@ -50,21 +49,20 @@ public class LootTableListener implements Listener {
                         String name = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : ChatColor.RED + item.getType().toString();
                         player.sendMessage(Info.main(main, "Successfully removed " + name + ChatColor.RESET + " from loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + "."));
                     }
-                }
-            } else if (inventory instanceof CraftInventoryPlayer) {
-                if (event.getAction() == InventoryAction.CLONE_STACK) {
-
+                } else {
+                    event.setCancelled(true);
                 }
             }
         }
     }
 
-//    // gets the slot an item is in
-//    public Integer getSlot(ItemStack item, Inventory inventory) {
-//        for (int i = 0; i < inventory.getSize(); i++) {
-//            if (inventory.getItem(i).isSimilar(item))
-//                return i;
-//        }
-//        return -1;
-//    }
+    @EventHandler
+    public void onLootTableGuiClose(InventoryCloseEvent event) {
+        if (event.getInventory().getTitle() == LootTableGui.inventoryTitle)
+            currentlyEditing.remove((Player) event.getPlayer());
+    }
+
+    public List<Player> getCurrentlyEditing() {
+        return currentlyEditing;
+    }
 }
