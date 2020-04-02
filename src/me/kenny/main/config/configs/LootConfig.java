@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class LootConfig extends Config {
     public LootConfig(Main main) {
@@ -20,6 +21,8 @@ public class LootConfig extends Config {
         getFileConfiguration().set(Integer.valueOf(nextKey).toString() + ".item", item.serialize());
         getFileConfiguration().set(Integer.valueOf(nextKey).toString() + ".rare", rare);
         save();
+
+        reorganize();
 
         return nextKey;
     }
@@ -56,16 +59,6 @@ public class LootConfig extends Config {
 
     public Map<ItemStack, Integer> getLoot() {
         Map<ItemStack, Integer> loot = new HashMap<ItemStack, Integer>();
-
-        // loading the file configuration again prevents null pointer
-        try {
-            getFileConfiguration().load(getFile());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
-
         for (String path : getFileConfiguration().getKeys(false)) {
             FileConfiguration configuration = getFileConfiguration();
             ConfigurationSection configurationSection = getFileConfiguration().getConfigurationSection(path + ".item");
@@ -83,5 +76,36 @@ public class LootConfig extends Config {
             }
         }
         return false;
+    }
+
+    // reorganizes the config from least to greatest.
+    private void reorganize() {
+        Map<Integer, Map<String, Object>> sections = new HashMap<>();
+
+        for (String path : getFileConfiguration().getKeys(false)) {
+            ConfigurationSection section = getFileConfiguration().getConfigurationSection(path);
+            sections.put(Integer.parseInt(path), section.getValues(true));
+        }
+
+        sections = sections.entrySet()
+                .stream()
+                .sorted(Map.Entry.<Integer, Map<String, Object>>comparingByKey())
+                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+
+        clearConfig();
+
+        for (Map.Entry<Integer, Map<String, Object>> entry : sections.entrySet()) {
+            for (Map.Entry<String, Object> value : entry.getValue().entrySet()) {
+                getFileConfiguration().set(entry.getKey() + "." + value.getKey(), value.getValue());
+            }
+        }
+
+        save();
+    }
+
+    private void clearConfig() {
+        for (String key : getFileConfiguration().getKeys(false)) {
+            getFileConfiguration().set(key, null);
+        }
     }
 }
