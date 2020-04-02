@@ -8,10 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class LootConfig extends Config {
     public LootConfig(Main main) {
@@ -44,8 +41,8 @@ public class LootConfig extends Config {
         return getFileConfiguration().getKeys(false).size() + 1;
     }
 
-    public List<ItemStack> getLoot() {
-        List<ItemStack> loot = new ArrayList<ItemStack>();
+    public Map<ItemStack, Integer> getLoot() {
+        Map<ItemStack, Integer> loot = new HashMap<ItemStack, Integer>();
 
         // loading the file configuration again prevents null pointer
         try {
@@ -61,14 +58,14 @@ public class LootConfig extends Config {
             ConfigurationSection configurationSection = getFileConfiguration().getConfigurationSection(path + ".item");
             Map<String, Object> section = getFileConfiguration().getConfigurationSection(path + ".item").getValues(false);
             ItemStack item = ItemStack.deserialize(section);
-            loot.add(item);
+            loot.put(item, Integer.parseInt(path));
         }
         return loot;
     }
 
     public boolean hasIdenticalItem(ItemStack item) {
-        for (ItemStack loot : getLoot()) {
-            if (loot.isSimilar(item)) {
+        for (Map.Entry<ItemStack, Integer> loot : getLoot().entrySet()) {
+            if (loot.getKey().isSimilar(item)) {
                 return true;
             }
         }
