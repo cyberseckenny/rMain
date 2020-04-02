@@ -16,7 +16,7 @@ public class LootConfig extends Config {
     }
 
     public Integer addLoot(ItemStack item, boolean rare) {
-        int nextKey = getNextKey();
+        int nextKey = getFirstAvailableKey();
         getFileConfiguration().set(Integer.valueOf(nextKey).toString() + ".item", item.serialize());
         getFileConfiguration().set(Integer.valueOf(nextKey).toString() + ".rare", rare);
         save();
@@ -36,9 +36,22 @@ public class LootConfig extends Config {
         return -1;
     }
 
-    // each loot will be stored in increments of 1, and this gets the next available one
-    public Integer getNextKey() {
-        return getFileConfiguration().getKeys(false).size() + 1;
+    // gets the first available key in the config
+    public Integer getFirstAvailableKey() {
+        int lastKey = 0;
+        Set<String> paths = getFileConfiguration().getKeys(false);
+
+        if (getFileConfiguration().getKeys(false).isEmpty())
+            return 1;
+
+        int lastValue = Integer.parseInt((String) paths.toArray()[paths.size() - 1]);
+        for (int i = 1; i < lastValue + 1; i++) {
+            if (!getFileConfiguration().contains(String.valueOf(i))) {
+                return i;
+            }
+            lastKey = i;
+        }
+        return lastKey + 1;
     }
 
     public Map<ItemStack, Integer> getLoot() {
