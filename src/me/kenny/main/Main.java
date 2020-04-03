@@ -1,6 +1,7 @@
 package me.kenny.main;
 
 import me.kenny.main.command.MainCommand;
+import me.kenny.main.config.configs.CooldownConfig;
 import me.kenny.main.config.configs.LootConfig;
 import me.kenny.main.item.SpecialItemHandler;
 import me.kenny.main.lootbox.LootTableListener;
@@ -15,6 +16,7 @@ public class Main extends JavaPlugin {
     private String lootboxLore;
 
     private LootConfig lootConfig;
+    private CooldownConfig cooldownConfig;
     private EditingPlayerHandler editingPlayerHandler;
     private SpecialItemHandler specialItemHandler;
 
@@ -25,6 +27,7 @@ public class Main extends JavaPlugin {
         setupConfig();
 
         lootConfig = new LootConfig(this);
+        cooldownConfig = new CooldownConfig(this);
         editingPlayerHandler = new EditingPlayerHandler();
         specialItemHandler = new SpecialItemHandler(this);
 
@@ -45,6 +48,8 @@ public class Main extends JavaPlugin {
     }
 
     public LootConfig getLootConfig() { return lootConfig; }
+
+    public CooldownConfig getCooldownConfig() { return cooldownConfig; }
 
     public EditingPlayerHandler getEditingPlayerHandler() { return editingPlayerHandler; }
 

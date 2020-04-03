@@ -1,7 +1,13 @@
 package me.kenny.main.item;
 
+import me.kenny.main.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -9,16 +15,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SpecialItem {
+public abstract class SpecialItem {
+    private Main main;
+    private String name;
     private ItemStack item;
+    private int cooldown;
+    private int uses;
 
-    public SpecialItem(String name, List<String> description, int cooldown, int uses, Material material) {
+    public SpecialItem(Main main, String name, List<String> description, int cooldown, int uses, Material material) {
+        this.main = main;
+        this.name = name;
+        this.cooldown = cooldown;
+        this.uses = uses;
+
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.GOLD + name);
         String usesString = uses == -1 ? "Infinity" : String.valueOf(uses);
         List<String> lore = new ArrayList<>();
-        System.out.println(description);
         for (String string : description) {
             lore.add(ChatColor.translateAlternateColorCodes('&', "&f" + string));
         }
@@ -28,7 +42,24 @@ public class SpecialItem {
         this.item = item;
     }
 
+    public abstract void onInteract(PlayerInteractEvent event);
+    public abstract void onDamage(EntityDamageByEntityEvent event);
+    public abstract void onProjectileLaunch(ProjectileLaunchEvent event);
+
+    public String getName() { return name; }
     public ItemStack getItem() {
         return item;
+    }
+    public int getCooldown() { return cooldown; }
+    public int getUses() { return uses; }
+
+    public void use(Player player, String message) {
+        String formattedCooldownString = name.toLowerCase().replace(" ", "");
+        if (!main.getCooldownConfig().isOnCooldown(player, formattedCooldownString)) {
+            player.sendMessage(message);
+            main.getCooldownConfig().addCooldown(player, name.toLowerCase().replace(" ", ""), cooldown);
+        } else {
+            player.sendMessage(ChatColor.RED + name + " is on cooldown for " + main.getCooldownConfig().getFormattedCooldown(player, formattedCooldownString));
+        }
     }
 }

@@ -1,11 +1,23 @@
 package me.kenny.main.item;
 
 import me.kenny.main.Main;
+import me.kenny.main.item.items.*;
+import net.minecraft.server.v1_7_R4.EntityLiving;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftProjectile;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -26,15 +38,80 @@ public class SpecialItemHandler implements Listener {
                 for (String section : configuration.getKeys(false)) {
                     String name = configuration.getString(section + ".name");
                     List<String> description = configuration.getStringList(section + ".description");
-                    System.out.println(configuration.getStringList(section + ".description"));
                     int cooldown = configuration.getInt(section + ".cooldown");
                     int uses = configuration.getInt(section + ".uses");
                     Material material = Material.getMaterial(configuration.getString(section + ".material"));
-                    SpecialItem specialItem = new SpecialItem(name, description, cooldown, uses, material);
+                    SpecialItem specialItem = getNewSpecialItem(name, description, cooldown, uses, material);
                     specialItems.add(specialItem);
                 }
             }
         }
+    }
+
+    // returns a new special item based on the class it will belong to
+    public SpecialItem getNewSpecialItem(String name, List<String> description, int cooldown, int uses, Material material) {
+        switch (name) {
+            case "Switcher Snowball":
+                return new Snowball(main, name, description, cooldown, uses, material);
+            case "Grappler":
+                return new Grappler(main, name, description, cooldown, uses, material);
+            case "Cobweb Gun":
+                return new CobwebGun(main, name, description, cooldown, uses, material);
+            case "Armor Swapper Axe":
+                return new ArmorSwapperAxe(main, name, description, cooldown, uses, material);
+            case "Teleport Star":
+                return new TeleportStar(main, name, description, cooldown, uses, material);
+            case "Berserk":
+                return new Berserk(main, name, description, cooldown, uses, material);
+        }
+        return null;
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        for (SpecialItem specialItem : getSpecialItems()) {
+            ItemStack item = event.getItem();
+            if (item.getItemMeta() != null && item.getItemMeta().getDisplayName() != null && matchesSpecialItemName(specialItem.getName(), item.getItemMeta().getDisplayName()))
+                specialItem.onInteract(event);
+        }
+    }
+
+    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
+        for (SpecialItem specialItem : getSpecialItems()) {
+            if (event.getEntity().getShooter() instanceof Player) {
+                Player player = (Player) event.getEntity().getShooter();
+                ItemStack item = player.getInventory().getItemInHand();
+                if (item.getItemMeta() != null && item.getItemMeta().getDisplayName() != null && matchesSpecialItemName(specialItem.getName(), item.getItemMeta().getDisplayName())) {
+                    specialItem.onProjectileLaunch(event);
+                    event.getEntity().setMetadata(specialItem.getName(), new FixedMetadataValue(main, specialItem.getName()));
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onDamage(EntityDamageByEntityEvent event) {
+        for (SpecialItem specialItem : getSpecialItems()) {
+            if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
+                Player player = (Player) event.getDamager();
+                ItemStack item = player.getItemInHand();
+                if (item != null && item.getType() != Material.AIR && item.getItemMeta() != null && matchesSpecialItemName(specialItem.getName(), item.getItemMeta().getDisplayName()))
+                    specialItem.onDamage(event);
+            }
+
+            // TODO: change this to players only
+            if (event.getDamager() instanceof Projectile) {
+                if (event.getDamager().hasMetadata(specialItem.getName()))
+                    specialItem.onDamage(event);
+            }
+        }
+    }
+
+    public boolean matchesSpecialItemName(String string, String name) {
+        if (ChatColor.stripColor(name).equals(string))
+            return true;
+        return false;
     }
 
     public List<SpecialItem> getSpecialItems() {

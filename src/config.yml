@@ -1,3 +1,50 @@
 lootbox-name: '&cRuins Box'
 lootbox-lore: '&7Right click to open.'
-rewards:
+items:
+  switcher_snowball:
+    name: 'Switcher Snowball'
+    description:
+      - 'Swaps your location with another player.'
+      - '&cNOTE: The player must be within 10 block range!'
+    cooldown: 30
+    uses: -1
+    material: SNOW_BALL
+  grappler:
+    name: 'Grappler'
+    description:
+      - 'Launches you in the direction you are facing.'
+    cooldown: 15
+    uses: -1
+    material: FISHING_ROD
+  cobweb_gun:
+    name: 'Cobweb Gun'
+    description:
+      - 'Fires a web into the distance.'
+    cooldown: 60
+    uses: -1
+    material: DIAMOND_BARDING
+  armor_swapper_axe:
+    name: 'Armor Swapper Axe'
+    description:
+      - 'Swaps a random piece of armor from a player.'
+    cooldown: 60
+    uses: -1
+    material: DIAMOND_AXE
+  teleport_star:
+    name: 'Teleport Star'
+    description:
+      - 'Teleports you to the last player who'
+      - 'attacked you within 15 seconds.'
+    cooldown: 0
+    uses: 1
+    material: NETHER_STAR
+  berserk:
+    name: 'Berserk'
+    description:
+      - 'Grants you strength, resistance, and'
+      - 'heals you.'
+    cooldown: 300
+    uses: -1
+    material: DIAMOND
+
+

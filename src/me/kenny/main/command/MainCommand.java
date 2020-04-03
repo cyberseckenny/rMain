@@ -44,6 +44,7 @@ public class MainCommand implements CommandExecutor  {
                 switch (args[0].toLowerCase()) {
                     case "viewitems":
                         new SpecialItemGui(main, player);
+                        break;
                     case "givelootbox":
                         ItemStack lootbox = new ItemStack(Material.ENDER_CHEST);
                         ItemMeta meta = lootbox.getItemMeta();
