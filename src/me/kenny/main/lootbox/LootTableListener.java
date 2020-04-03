@@ -12,13 +12,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LootTableListener implements Listener {
     private Main main;
-    private List<Player> currentlyEditing = new ArrayList<>();
 
     public LootTableListener(Main main) {
         this.main = main;
@@ -27,12 +27,27 @@ public class LootTableListener implements Listener {
     @EventHandler
     public void onLootMove(InventoryClickEvent event) {
         if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
-            ItemStack item = event.getCurrentItem();
             Inventory inventory = event.getInventory();
-            Inventory clickedInventory = event.getClickedInventory();
-            Player player = (Player) event.getWhoClicked();
-
             if (inventory.getTitle().equalsIgnoreCase(LootTableGui.inventoryTitle)) {
+//                // seperates the rare meta from the item so we can use it later
+//                ItemStack unseperatedItem = event.getCurrentItem();
+//                ItemStack item = unseperatedItem.clone();
+//
+//                if (unseperatedItem.getItemMeta() != null && unseperatedItem.getItemMeta().getLore() != null && !unseperatedItem.getItemMeta().getLore().isEmpty()) {
+//                    ItemMeta unseperatedMeta = unseperatedItem.getItemMeta();
+//                    for (int i = 0; i < unseperatedMeta.getLore().size() - 1; i++) {
+//                        if (unseperatedMeta.getLore().get(i).contains("rare")) {
+//                            item.getItemMeta().getLore().remove(i);
+//                        }
+//                    }
+//                }
+
+                // TODO: rarity
+
+                ItemStack item = event.getCurrentItem();
+                Inventory clickedInventory = event.getClickedInventory();
+                Player player = (Player) event.getWhoClicked();
+
                 if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY)  {
                     if (inventory instanceof CraftInventory && clickedInventory instanceof CraftInventoryPlayer) {
                         boolean rare = false;
@@ -48,21 +63,12 @@ public class LootTableListener implements Listener {
                         int key = main.getLootConfig().removeLoot(item);
                         String name = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : ChatColor.RED + item.getType().toString();
                         player.sendMessage(Info.main(main, "Successfully removed " + name + ChatColor.RESET + " from loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + "."));
+                        player.getInventory().addItem(item);
                     }
                 } else {
                     event.setCancelled(true);
                 }
             }
         }
-    }
-
-    @EventHandler
-    public void onLootTableGuiClose(InventoryCloseEvent event) {
-        if (event.getInventory().getTitle() == LootTableGui.inventoryTitle)
-            currentlyEditing.remove((Player) event.getPlayer());
-    }
-
-    public List<Player> getCurrentlyEditing() {
-        return currentlyEditing;
     }
 }

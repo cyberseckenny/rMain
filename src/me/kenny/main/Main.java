@@ -46,17 +46,6 @@ public class Main extends JavaPlugin {
 
     public EditingPlayerHandler getEditingPlayerHandler() { return editingPlayerHandler; }
 
-    public boolean isLootbox(ItemMeta meta) {
-        if (meta.getLore() != null && !meta.getLore().isEmpty()) {
-            if (meta.getDisplayName().equals(getLootboxName())) {
-                if (meta.getLore().get(0).equals(getLootboxLore())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public void setupConfig() {
         this.reloadConfig();
         lootboxName = ChatColor.translateAlternateColorCodes('&', getConfig().getString("lootbox-name"));

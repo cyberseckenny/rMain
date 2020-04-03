@@ -3,15 +3,14 @@ package me.kenny.main.config.configs;
 import me.kenny.main.Main;
 import me.kenny.main.config.Config;
 import me.kenny.main.lootbox.LootTableGui;
+import me.kenny.main.util.DoubleValue;
 import me.kenny.main.util.EditingPlayerHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,11 +32,10 @@ public class LootConfig extends Config {
     }
 
     public Integer removeLoot(ItemStack item) {
-        updateLootGui();
-
         for (String path : getFileConfiguration().getKeys(false)) {
             ItemStack configItem = ItemStack.deserialize(getFileConfiguration().getConfigurationSection(path + ".item").getValues(true));
             if (configItem.isSimilar(item)) {
+                updateLootGui();
                 getFileConfiguration().set(path, null);
                 save();
                 return Integer.parseInt(path);
@@ -65,20 +63,21 @@ public class LootConfig extends Config {
         return lastKey + 1;
     }
 
-    public Map<ItemStack, Integer> getLoot() {
-        Map<ItemStack, Integer> loot = new HashMap<ItemStack, Integer>();
+    public Map<ItemStack, DoubleValue> getLoot() {
+        Map<ItemStack, DoubleValue> loot = new HashMap<ItemStack, DoubleValue>();
         for (String path : getFileConfiguration().getKeys(false)) {
             FileConfiguration configuration = getFileConfiguration();
             ConfigurationSection configurationSection = getFileConfiguration().getConfigurationSection(path + ".item");
             Map<String, Object> section = getFileConfiguration().getConfigurationSection(path + ".item").getValues(false);
             ItemStack item = ItemStack.deserialize(section);
-            loot.put(item, Integer.parseInt(path));
+            boolean rare = getFileConfiguration().getBoolean(path + ".rare");
+            loot.put(item, new DoubleValue(Integer.parseInt(path), rare));
         }
         return loot;
     }
 
     public boolean hasIdenticalItem(ItemStack item) {
-        for (Map.Entry<ItemStack, Integer> loot : getLoot().entrySet()) {
+        for (Map.Entry<ItemStack, DoubleValue> loot : getLoot().entrySet()) {
             if (loot.getKey().isSimilar(item)) {
                 return true;
             }
@@ -112,7 +111,6 @@ public class LootConfig extends Config {
     }
 
     private void updateLootGui() {
-        Bukkit.broadcastMessage(main.getEditingPlayerHandler().getEditing(EditingPlayerHandler.EditingType.LOOT_TABLE_GUI) + "");
         for (Player player : main.getEditingPlayerHandler().getEditing(EditingPlayerHandler.EditingType.LOOT_TABLE_GUI)) {
             player.getOpenInventory().getTopInventory().setContents(new LootTableGui(main, player).getGui().getContents());
         }
