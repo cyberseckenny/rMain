@@ -1,6 +1,7 @@
 package me.kenny.main.command;
 
 import me.kenny.main.Main;
+import me.kenny.main.item.SpecialItemGui;
 import me.kenny.main.lootbox.LootTableGui;
 import me.kenny.main.util.Info;
 import net.minecraft.util.org.apache.commons.lang3.StringUtils;
@@ -41,13 +42,14 @@ public class MainCommand implements CommandExecutor  {
                 help(player);
             } else {
                 switch (args[0].toLowerCase()) {
+                    case "viewitems":
+                        new SpecialItemGui(main, player);
                     case "givelootbox":
                         ItemStack lootbox = new ItemStack(Material.ENDER_CHEST);
                         ItemMeta meta = lootbox.getItemMeta();
                         meta.setDisplayName(main.getLootboxName());
                         meta.setLore(Arrays.asList(main.getLootboxLore()));
                         lootbox.setItemMeta(meta);
-
                         player.getInventory().addItem(lootbox);
                         player.sendMessage(Info.main(main, "Gifted you a " + main.getLootboxName() + ChatColor.RESET + "."));
                         break;
@@ -118,6 +120,7 @@ public class MainCommand implements CommandExecutor  {
         player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + StringUtils.repeat("-", 40));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&lMain Commands"));
         player.sendMessage(" ");
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main viewItems &eViews the special items."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main giveLootbox &eGives you a lootbox."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main addLoot <true/false> &eAdds your current held item to the loot table. If true, the item will be considered rare and if used in lootboxes it will only appear in the ender chest."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main removeLoot &eRemoves your current held item from the loot table. NOTE: The item must be identical to the item in the loot table."));

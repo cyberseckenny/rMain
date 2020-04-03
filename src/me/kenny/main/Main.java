@@ -2,13 +2,12 @@ package me.kenny.main;
 
 import me.kenny.main.command.MainCommand;
 import me.kenny.main.config.configs.LootConfig;
-import me.kenny.main.lootbox.LootTableGui;
+import me.kenny.main.item.SpecialItemHandler;
 import me.kenny.main.lootbox.LootTableListener;
 import me.kenny.main.lootbox.LootboxListener;
 import me.kenny.main.util.EditingPlayerHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
@@ -17,6 +16,7 @@ public class Main extends JavaPlugin {
 
     private LootConfig lootConfig;
     private EditingPlayerHandler editingPlayerHandler;
+    private SpecialItemHandler specialItemHandler;
 
     @Override
     public void onEnable() {
@@ -26,10 +26,12 @@ public class Main extends JavaPlugin {
 
         lootConfig = new LootConfig(this);
         editingPlayerHandler = new EditingPlayerHandler();
+        specialItemHandler = new SpecialItemHandler(this);
 
         Bukkit.getPluginManager().registerEvents(new LootboxListener(this), this);
         Bukkit.getPluginManager().registerEvents(new LootTableListener(this), this);
         Bukkit.getPluginManager().registerEvents(editingPlayerHandler, this);
+        Bukkit.getPluginManager().registerEvents(specialItemHandler, this);
 
         Bukkit.getPluginCommand("main").setExecutor(new MainCommand(this));
     }
@@ -45,6 +47,8 @@ public class Main extends JavaPlugin {
     public LootConfig getLootConfig() { return lootConfig; }
 
     public EditingPlayerHandler getEditingPlayerHandler() { return editingPlayerHandler; }
+
+    public SpecialItemHandler getSpecialItemHandler() { return specialItemHandler; }
 
     public void setupConfig() {
         this.reloadConfig();

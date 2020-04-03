@@ -26,8 +26,10 @@ public class LootboxGui {
         // won't place borders if the index is one of these
         int[] center = {12, 13, 14, 21, 22, 23, 30, 31, 32, 40};
 
+        // TODO: fix lootbox giving the same index as the last clicked chest and the ender chest
+
         Inventory gui = Bukkit.createInventory(null, size, main.getLootboxName());
-        ItemStack border = new ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.PINK.getData());
+        ItemStack border = new ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.GRAY.getData());
         ItemMeta borderItemMeta = border.getItemMeta();
         borderItemMeta.setDisplayName(" ");
         border.setItemMeta(borderItemMeta);
