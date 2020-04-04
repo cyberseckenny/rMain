@@ -2,6 +2,7 @@ package me.kenny.main.item;
 
 import me.kenny.main.Main;
 import me.kenny.main.item.items.*;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,13 +17,18 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SpecialItemHandler implements Listener {
     private Main main;
     private List<SpecialItem> specialItems = new ArrayList<>();
+    private Map<Player, Player> lastAttacked = new HashMap<>();
+    private Map<Player, Long> lastAttackedTime = new HashMap<>();
 
     public SpecialItemHandler(Main main) {
         this.main = main;
@@ -103,6 +109,22 @@ public class SpecialItemHandler implements Listener {
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
+            Player damager = (Player) event.getDamager();
+            Player target = (Player) event.getEntity();
+            lastAttacked.put(target, damager);
+            long currentTime = System.currentTimeMillis();
+            lastAttackedTime.put(target, currentTime);
+            Bukkit.getScheduler().runTaskLater(main, new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (currentTime == lastAttackedTime.get(target)) {
+                        lastAttacked.remove(target);
+                    }
+                }
+            }, 300L);
+        }
+
+        if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
             Player player = (Player) event.getDamager();
             ItemStack item = player.getItemInHand();
             if (item != null && item.getType() != Material.AIR && item.getItemMeta() != null) {
@@ -145,4 +167,6 @@ public class SpecialItemHandler implements Listener {
     public List<SpecialItem> getSpecialItems() {
         return specialItems;
     }
+
+    public Map<Player, Player> getLastAttacker() { return lastAttacked; }
 }

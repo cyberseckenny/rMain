@@ -80,12 +80,4 @@ public class Berserk extends SpecialItem {
         else
             player.setHealth(d.getHealth() + amount);
     }
-
-    public void deductItem(Player player, ItemStack item) {
-        if (item.getAmount() > 1) {
-            item.setAmount(item.getAmount() - 1);
-        } else {
-            player.getInventory().removeItem(item);
-        }
-    }
 }

@@ -19,23 +19,24 @@ items:
   cobweb_gun:
     name: 'Cobweb Gun'
     description:
-      - 'Fires a web into the distance.'
+      - 'Fires an arrow that spawns a'
+      - 'group of webs.'
     cooldown: 180
     uses: -1
     material: DIAMOND_BARDING
   armor_swapper_axe:
     name: 'Armor Swapper Axe'
     description:
-      - 'Swaps a random piece of armor from a player.'
+      - 'Removes the helmet off of a player.'
     cooldown: 60
     uses: -1
-    material: DIAMOND_AXE
+    material: GOLD_AXE
   teleport_star:
     name: 'Teleport Star'
     description:
       - 'Teleports you to the last player who'
       - 'attacked you within 15 seconds.'
-    cooldown: 0
+    cooldown: 5
     uses: 1
     material: NETHER_STAR
   berserk:

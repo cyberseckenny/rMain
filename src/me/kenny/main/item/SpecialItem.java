@@ -73,4 +73,12 @@ public abstract class SpecialItem {
             return false;
         }
     }
+
+    public void deductItem(Player player, ItemStack item) {
+        if (item.getAmount() > 1) {
+            item.setAmount(item.getAmount() - 1);
+        } else {
+            player.getInventory().removeItem(item);
+        }
+    }
 }

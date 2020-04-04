@@ -2,23 +2,51 @@ package me.kenny.main.item.items;
 
 import me.kenny.main.Main;
 import me.kenny.main.item.SpecialItem;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TeleportStar extends SpecialItem {
+    private Map<Player, Player> lastAttacker = new HashMap<>();
+
     public TeleportStar(Main main, String name, List<String> description, int cooldown, int uses, Material material) {
         super(main, name, description, cooldown, uses, material);
     }
 
     @Override
     public void onInteract(PlayerInteractEvent event) {
-
+        Player player = event.getPlayer();
+        Map<Player, Player> lastAttacker = main.getSpecialItemHandler().getLastAttacker();
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
+            if (lastAttacker.get(player) != null) {
+                String message = "Teleporting to current location of " + ChatColor.GREEN + lastAttacker.get(player).getName() + ChatColor.GOLD + " in " + ChatColor.GREEN + "5 seconds" + ChatColor.GOLD + ".";
+                if (use(player, message)) {
+                    deductItem(player, player.getInventory().getItemInHand());
+                    Location targetLocation = lastAttacker.get(player).getLocation().clone();
+                    Bukkit.getScheduler().runTaskLater(main, new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            player.teleport(targetLocation);
+                        }
+                    }, 100L);
+                }
+            } else {
+                player.sendMessage(ChatColor.RED + "Nobody has attacked you in the last 15 seconds!");
+            }
+        }
     }
 
     @Override
