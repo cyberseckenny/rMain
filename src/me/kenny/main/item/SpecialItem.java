@@ -1,6 +1,8 @@
 package me.kenny.main.item;
 
+import com.mysql.jdbc.TimeUtil;
 import me.kenny.main.Main;
+import me.kenny.main.util.TimeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public abstract class SpecialItem {
     private Main main;
@@ -36,7 +39,8 @@ public abstract class SpecialItem {
         for (String string : description) {
             lore.add(ChatColor.translateAlternateColorCodes('&', "&f" + string));
         }
-        lore.addAll(Arrays.asList("", ChatColor.GRAY + "" + ChatColor.ITALIC + "Cooldown: " + cooldown + " seconds", ChatColor.GRAY + "" + ChatColor.ITALIC + "Uses: " + usesString));
+        String formattedCooldown = TimeUtils.getFormattedTimeWithoutZeroes(cooldown);
+        lore.addAll(Arrays.asList("", ChatColor.GRAY + "" + ChatColor.ITALIC + "Cooldown: " + formattedCooldown, ChatColor.GRAY + "" + ChatColor.ITALIC + "Uses: " + usesString));
         meta.setLore(lore);
         item.setItemMeta(meta);
         this.item = item;
@@ -53,13 +57,16 @@ public abstract class SpecialItem {
     public int getCooldown() { return cooldown; }
     public int getUses() { return uses; }
 
-    public void use(Player player, String message) {
+    public boolean use(Player player, String message) {
         String formattedCooldownString = name.toLowerCase().replace(" ", "");
         if (!main.getCooldownConfig().isOnCooldown(player, formattedCooldownString)) {
-            player.sendMessage(message);
+            player.sendMessage(ChatColor.GRAY + "[" + ChatColor.GOLD + name + ChatColor.GRAY + "] " + ChatColor.WHITE + message);
             main.getCooldownConfig().addCooldown(player, name.toLowerCase().replace(" ", ""), cooldown);
+            return true;
         } else {
-            player.sendMessage(ChatColor.RED + name + " is on cooldown for " + main.getCooldownConfig().getFormattedCooldown(player, formattedCooldownString));
+            int seconds = (int) TimeUnit.MILLISECONDS.toSeconds(main.getCooldownConfig().getCooldown(player, formattedCooldownString) - System.currentTimeMillis());
+            player.sendMessage(ChatColor.RED + name + " is on cooldown for " + TimeUtils.getFormattedTime(seconds) + ".");
+            return false;
         }
     }
 }

@@ -2,27 +2,21 @@ package me.kenny.main.item;
 
 import me.kenny.main.Main;
 import me.kenny.main.item.items.*;
-import net.minecraft.server.v1_7_R4.EntityLiving;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftProjectile;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class SpecialItemHandler implements Listener {
     private Main main;
@@ -52,7 +46,7 @@ public class SpecialItemHandler implements Listener {
     public SpecialItem getNewSpecialItem(String name, List<String> description, int cooldown, int uses, Material material) {
         switch (name) {
             case "Switcher Snowball":
-                return new Snowball(main, name, description, cooldown, uses, material);
+                return new SwitcherSnowball(main, name, description, cooldown, uses, material);
             case "Grappler":
                 return new Grappler(main, name, description, cooldown, uses, material);
             case "Cobweb Gun":
@@ -71,7 +65,7 @@ public class SpecialItemHandler implements Listener {
     public void onInteract(PlayerInteractEvent event) {
         for (SpecialItem specialItem : getSpecialItems()) {
             ItemStack item = event.getItem();
-            if (item.getItemMeta() != null && item.getItemMeta().getDisplayName() != null && matchesSpecialItemName(specialItem.getName(), item.getItemMeta().getDisplayName()))
+            if (item != null && item.getType() != Material.AIR && item.getItemMeta() != null && item.getItemMeta().getDisplayName() != null && matchesSpecialItemName(specialItem.getName(), item.getItemMeta().getDisplayName()))
                 specialItem.onInteract(event);
         }
     }
@@ -100,8 +94,7 @@ public class SpecialItemHandler implements Listener {
                     specialItem.onDamage(event);
             }
 
-            // TODO: change this to players only
-            if (event.getDamager() instanceof Projectile) {
+            if (event.getDamager() instanceof Projectile && event.getEntity() instanceof Player) {
                 if (event.getDamager().hasMetadata(specialItem.getName()))
                     specialItem.onDamage(event);
             }

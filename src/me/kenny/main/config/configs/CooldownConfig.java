@@ -15,7 +15,7 @@ public class CooldownConfig extends Config {
 
     public void addCooldown(Player player, String cooldown, long length) {
         Map<String, Long> map = new HashMap<>();
-        getFileConfiguration().set(cooldown, cooldown);
+        getFileConfiguration().set(player.getUniqueId() + "." + cooldown, System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(length));
         save();
     }
 
@@ -27,28 +27,15 @@ public class CooldownConfig extends Config {
 
     public boolean isOnCooldown(Player player, String cooldown) {
         for (Map.Entry<String, Object> entry : getFileConfiguration().getValues(false).entrySet()) {
-            if (entry.getKey().equals(cooldown)) {
-                Long value = (Long) entry.getValue();
-                if (value < System.currentTimeMillis()) {
+            System.out.println(entry.getKey());
+            if (entry.getKey().equals(player.getUniqueId().toString())) {
+                long value = getFileConfiguration().getLong(player.getUniqueId().toString() + "." + cooldown);
+                System.out.println(value - System.currentTimeMillis());
+                if (value > System.currentTimeMillis()) {
                     return true;
                 }
             }
         }
         return false;
-    }
-
-    public String getFormattedCooldown(Player player, String cooldownName) {
-        int cooldown = (int) TimeUnit.SECONDS.convert(getCooldown(player, cooldownName), TimeUnit.MILLISECONDS);
-        int hours = (cooldown / 60 / 60) % 60;
-        int minutes = (cooldown / 60) % 60;
-        int seconds = cooldown % 60;
-
-        String timeLeft = seconds + " seconds";
-        if (minutes != 0)
-            timeLeft = minutes + " minutes, " + timeLeft;
-        if (hours != 0)
-            timeLeft = hours + " hours, " + timeLeft;
-
-        return timeLeft;
     }
 }
