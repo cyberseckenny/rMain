@@ -1,8 +1,8 @@
 package me.kenny.main.command;
 
 import me.kenny.main.Main;
-import me.kenny.main.item.SpecialItemGui;
-import me.kenny.main.lootbox.LootTableGui;
+import me.kenny.main.gui.SpecialItemGui;
+import me.kenny.main.gui.LootTableGui;
 import me.kenny.main.util.Info;
 import net.minecraft.util.org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -43,7 +43,7 @@ public class MainCommand implements CommandExecutor  {
             } else {
                 switch (args[0].toLowerCase()) {
                     case "viewitems":
-                        new SpecialItemGui(main, player);
+                        player.openInventory(new SpecialItemGui(main).getGui());
                         break;
                     case "givelootbox":
                         ItemStack lootbox = new ItemStack(Material.ENDER_CHEST);
@@ -67,7 +67,7 @@ public class MainCommand implements CommandExecutor  {
                                 if (main.getLootConfig().hasIdenticalItem(item)) {
                                     player.sendMessage(ChatColor.RED + "You can not add duplicates of an item to the loot table!");
                                 } else {
-                                    int key = main.getLootConfig().addLoot(item, rare);
+                                    int key = main.getLootConfig().addItem(item, rare, "");
                                     String name = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : ChatColor.RED + item.getType().toString();
                                     player.sendMessage(Info.main(main, "Successfully added " + name + ChatColor.RESET + " to loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + ". (rare: " + ChatColor.RED + rare + ChatColor.RESET + ")"));
                                 }
@@ -80,7 +80,7 @@ public class MainCommand implements CommandExecutor  {
                             return true;
                         } else {
                             ItemStack item = player.getInventory().getItemInHand();
-                            int key = main.getLootConfig().removeLoot(item);
+                            int key = main.getLootConfig().removeItem(item, "");
                             if (key == -1) {
                                 player.sendMessage(ChatColor.RED + "The item in your hand is not in the loot table!");
                             } else {
@@ -90,7 +90,7 @@ public class MainCommand implements CommandExecutor  {
                         }
                         break;
                     case "viewloot":
-                        player.openInventory(new LootTableGui(main, player).getGui());
+                        player.openInventory(new LootTableGui(main).getGui());
                         break;
                     case "reload":
                         main.setupConfig();

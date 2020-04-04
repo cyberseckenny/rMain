@@ -1,6 +1,6 @@
 package me.kenny.main.util;
 
-import me.kenny.main.lootbox.LootTableGui;
+import me.kenny.main.gui.LootTableGui;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

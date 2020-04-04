@@ -1,4 +1,4 @@
-package me.kenny.main.lootbox;
+package me.kenny.main.gui;
 
 import me.kenny.main.Main;
 import me.kenny.main.util.DoubleValue;
@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class LootTableGui {
+public class LootTableGui implements Gui {
     private Main main;
     public final static String inventoryTitle = "Viewing loot table";
 
-    public LootTableGui(Main main, Player player) {
+    public LootTableGui(Main main) {
         this.main = main;
     }
 

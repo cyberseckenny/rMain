@@ -1,4 +1,4 @@
-package me.kenny.main.lootbox;
+package me.kenny.main.gui;
 
 import me.kenny.main.Main;
 import org.bukkit.Bukkit;
@@ -12,13 +12,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 
-public class LootboxGui {
+public class LootboxGui implements Gui {
     private Main main;
 
-    public LootboxGui(Main main, Player player) {
+    public LootboxGui(Main main) {
         this.main = main;
-
-        player.openInventory(getGui());
     }
 
     public Inventory getGui() {

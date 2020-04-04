@@ -1,11 +1,11 @@
 package me.kenny.main.lootbox;
 
 import me.kenny.main.Main;
+import me.kenny.main.gui.LootboxGui;
 import me.kenny.main.util.Info;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,16 +34,15 @@ public class LootboxListener implements Listener {
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Player player = event.getPlayer();
             ItemStack clicked = event.getItem();
-
-            if (main.getLootConfig().getLoot().size() < 10) {
-                if (player.hasPermission("main.modify"))
-                    player.sendMessage(ChatColor.RED + "You must add at least 10 items to the loot table for lootboxes to function.");
-                event.setCancelled(true);
-                return;
-            }
-
             if (clicked != null && clicked.getItemMeta() != null && isLootbox(clicked.getItemMeta())) {
-                new LootboxGui(main, player);
+                if (main.getLootConfig().getLoot().size() < 10) {
+                    if (player.hasPermission("main.modify"))
+                        player.sendMessage(ChatColor.RED + "You must add at least 10 items to the loot table for lootboxes to function.");
+                    event.setCancelled(true);
+                    return;
+                }
+
+                player.openInventory(new LootboxGui(main).getGui());
                 removeOne(player, clicked);
                 player.sendMessage(Info.lootboxes(main, "Opening lootbox."));
                 event.setCancelled(true);
@@ -53,8 +52,10 @@ public class LootboxListener implements Listener {
 
     @EventHandler
     public void onLootboxOpen(InventoryOpenEvent event) {
-        Player player = (Player) event.getPlayer();
-        lootboxStorage.put(player, new LootboxStorage(getRandomLoot(10)));
+        if (event.getInventory().getTitle().equalsIgnoreCase(main.getLootboxName())) {
+            Player player = (Player) event.getPlayer();
+            lootboxStorage.put(player, new LootboxStorage(getRandomLoot(10)));
+        }
     }
 
     @EventHandler

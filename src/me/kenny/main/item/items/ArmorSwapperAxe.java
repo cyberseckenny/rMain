@@ -31,7 +31,6 @@ public class ArmorSwapperAxe extends SpecialItem {
         Player damager = (Player) event.getDamager();
         Player target = (Player) event.getEntity();
         if (target.getInventory().getHelmet() != null) {
-            System.out.println(target.getInventory().firstEmpty());
             if (target.getInventory().firstEmpty() != -1) {
                 String message = "Swapping the helmet of " + ChatColor.GREEN + target.getName() + ChatColor.GOLD + " in " + ChatColor.GREEN + "5 seconds" + ChatColor.GOLD + ".";
                 if (use(damager, message)) {

@@ -1,6 +1,7 @@
 package me.kenny.main.lootbox;
 
 import me.kenny.main.Main;
+import me.kenny.main.gui.LootTableGui;
 import me.kenny.main.util.Info;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,10 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class LootTableListener implements Listener {
     private Main main;
@@ -55,12 +52,12 @@ public class LootTableListener implements Listener {
                             player.sendMessage(ChatColor.RED + "You can not add duplicates of an item to the loot table!");
                             event.setCancelled(true);
                         } else {
-                            int key = main.getLootConfig().addLoot(item, rare);
+                            int key = main.getLootConfig().addItem(item, rare, "");
                             String name = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : ChatColor.RED + item.getType().toString();
                             player.sendMessage(Info.main(main, "Successfully added " + name + ChatColor.RESET + " to loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + ". (rare: " + ChatColor.RED + rare + ChatColor.RESET + ")"));
                         }
                     } else if (inventory instanceof CraftInventory && clickedInventory instanceof CraftInventory) {
-                        int key = main.getLootConfig().removeLoot(item);
+                        int key = main.getLootConfig().removeItem(item, "");
                         String name = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : ChatColor.RED + item.getType().toString();
                         player.sendMessage(Info.main(main, "Successfully removed " + name + ChatColor.RESET + " from loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + "."));
                         player.getInventory().addItem(item);
