@@ -28,7 +28,7 @@ items:
     name: 'Armor Swapper Axe'
     description:
       - 'Removes the helmet off of a player.'
-    cooldown: 60
+    cooldown: 180
     uses: -1
     material: GOLD_AXE
   teleport_star:
@@ -36,7 +36,7 @@ items:
     description:
       - 'Teleports you to the last player who'
       - 'attacked you within 15 seconds.'
-    cooldown: 5
+    cooldown: 60
     uses: 1
     material: NETHER_STAR
   berserk:
