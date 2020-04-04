@@ -21,11 +21,9 @@ public class TimeUtils {
 
     public static String getFormattedTimeWithoutZeroes(int time) {
         String cooldown = getFormattedTime(time);
-        System.out.println(cooldown);
         cooldown = cooldown.replace(", 0 seconds", "");
         cooldown = cooldown.replace(", 0 minutes", "");
         cooldown = cooldown.replace("0 hours", "");
-        System.out.print(cooldown);
         return cooldown;
     }
 }

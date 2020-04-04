@@ -11,6 +11,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
@@ -30,25 +31,34 @@ public class SwitcherSnowball extends SpecialItem {
             Player player = (Player) snowball.getShooter();
             Player target = (Player) event.getEntity();
             double distance = player.getLocation().distance(target.getLocation());
-            String message = "You hit " + ChatColor.GOLD + target.getName() + ChatColor.WHITE + " from " + ChatColor.GOLD + (int) distance + " blocks" + ChatColor.WHITE + " away!";
+            String message = ChatColor.GOLD + "You hit " + ChatColor.GREEN + target.getName() + ChatColor.GOLD + " from " + ChatColor.GREEN + (int) distance + " blocks" + ChatColor.GOLD + " away!";
             if (distance <= 10 && use(player, message)) {
                 Location playerLocation = player.getLocation().clone();
                 Location targetLocation = target.getLocation().clone();
                 player.teleport(targetLocation);
                 target.teleport(playerLocation);
             } else {
-                if (distance > 10)
-                    refund(player);
+                if (distance > 10) 
+                    outOfRange(player);
+                refund(player);
                 event.setCancelled(true);
             }
         }
     }
 
+    private void outOfRange(Player player) {
+        player.sendMessage(ChatColor.RED + "Your target must be at least 10 blocks away!");
+    }
+
     @Override
     public void onProjectileLaunch(ProjectileLaunchEvent event) { }
 
+    @Override
+    public void onFish(PlayerFishEvent event) {
+
+    }
+
     public void refund(Player player) {
-        player.sendMessage(ChatColor.RED + "Your target must be at least 10 blocks away!");
         player.getInventory().addItem(getItem());
     }
 }

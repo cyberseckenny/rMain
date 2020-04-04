@@ -7,7 +7,7 @@ items:
       - 'Swaps your location with another player.'
       - '&cNOTE: The player must be within 10 block range!'
     cooldown: 30
-    uses: -1
+    uses: 1
     material: SNOW_BALL
   grappler:
     name: 'Grappler'
@@ -44,7 +44,7 @@ items:
       - 'Grants you strength, resistance, and'
       - 'heals you.'
     cooldown: 300
-    uses: -1
+    uses: 1
     material: DIAMOND
 
 
