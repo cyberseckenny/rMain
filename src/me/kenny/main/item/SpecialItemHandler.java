@@ -10,7 +10,9 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -63,42 +65,75 @@ public class SpecialItemHandler implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        for (SpecialItem specialItem : getSpecialItems()) {
-            ItemStack item = event.getItem();
-            if (item != null && item.getType() != Material.AIR && item.getItemMeta() != null && item.getItemMeta().getDisplayName() != null && matchesSpecialItemName(specialItem.getName(), item.getItemMeta().getDisplayName()))
-                specialItem.onInteract(event);
+        ItemStack item = event.getItem();
+        if (item != null && item.getType() != Material.AIR && item.getItemMeta() != null && item.getItemMeta().getDisplayName() != null) {
+            for (SpecialItem specialItem : getSpecialItems()) {
+                if (matchesSpecialItemName(specialItem.getName(), item.getItemMeta().getDisplayName()))
+                    specialItem.onInteract(event);
+            }
         }
     }
 
     @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
-        for (SpecialItem specialItem : getSpecialItems()) {
-            if (event.getEntity().getShooter() instanceof Player) {
-                Player player = (Player) event.getEntity().getShooter();
-                ItemStack item = player.getInventory().getItemInHand();
-                if (item.getItemMeta() != null && item.getItemMeta().getDisplayName() != null && matchesSpecialItemName(specialItem.getName(), item.getItemMeta().getDisplayName())) {
-                    specialItem.onProjectileLaunch(event);
-                    event.getEntity().setMetadata(specialItem.getName(), new FixedMetadataValue(main, specialItem.getName()));
+        if (event.getEntity().getShooter() instanceof Player) {
+            Player player = (Player) event.getEntity().getShooter();
+            ItemStack item = player.getInventory().getItemInHand();
+            if (item.getItemMeta() != null && item.getItemMeta().getDisplayName() != null) {
+                for (SpecialItem specialItem : getSpecialItems()) {
+                    if (matchesSpecialItemName(specialItem.getName(), item.getItemMeta().getDisplayName())) {
+                        specialItem.onProjectileLaunch(event);
+                        event.getEntity().setMetadata(specialItem.getName(), new FixedMetadataValue(main, specialItem.getName()));
+                    }
                 }
             }
         }
     }
 
     @EventHandler
-    public void onDamage(EntityDamageByEntityEvent event) {
-        for (SpecialItem specialItem : getSpecialItems()) {
-            if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
-                Player player = (Player) event.getDamager();
-                ItemStack item = player.getItemInHand();
-                if (item != null && item.getType() != Material.AIR && item.getItemMeta() != null && matchesSpecialItemName(specialItem.getName(), item.getItemMeta().getDisplayName()))
-                    specialItem.onDamage(event);
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if (event.getEntity().getShooter() instanceof Player) {
+            for (SpecialItem specialItem : getSpecialItems()) {
+                if (event.getEntity().hasMetadata(specialItem.getName()))
+                    specialItem.onProjectileHit(event);
             }
+        }
+    }
 
-            if (event.getDamager() instanceof Projectile && event.getEntity() instanceof Player) {
+    @EventHandler
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
+            Player player = (Player) event.getDamager();
+            ItemStack item = player.getItemInHand();
+            if (item != null && item.getType() != Material.AIR && item.getItemMeta() != null) {
+                for (SpecialItem specialItem : getSpecialItems()) {
+                    if (matchesSpecialItemName(specialItem.getName(), item.getItemMeta().getDisplayName()))
+                        specialItem.onDamage(event);
+                }
+            }
+        }
+
+        if (event.getDamager() instanceof Projectile && event.getEntity() instanceof Player) {
+            for (SpecialItem specialItem : getSpecialItems()) {
                 if (event.getDamager().hasMetadata(specialItem.getName()))
                     specialItem.onDamage(event);
             }
         }
+    }
+
+    @EventHandler
+    public void onFish(PlayerFishEvent event) {
+        if (event.getState() == PlayerFishEvent.State.IN_GROUND || event.getState() == PlayerFishEvent.State.FAILED_ATTEMPT) {
+            Player player = event.getPlayer();
+            ItemStack item = player.getInventory().getItemInHand();
+            if (item != null && item.getType() != Material.AIR && item.getItemMeta() != null && item.getItemMeta().getDisplayName() != null) {
+                for (SpecialItem specialItem : getSpecialItems()) {
+                    if (matchesSpecialItemName(specialItem.getName(), item.getItemMeta().getDisplayName()))
+                        specialItem.onFish(event);
+                }
+            }
+        }
+
     }
 
     public boolean matchesSpecialItemName(String string, String name) {

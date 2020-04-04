@@ -54,6 +54,11 @@ public class SwitcherSnowball extends SpecialItem {
     public void onProjectileLaunch(ProjectileLaunchEvent event) { }
 
     @Override
+    public void onProjectileHit(ProjectileHitEvent event) {
+
+    }
+
+    @Override
     public void onFish(PlayerFishEvent event) {
 
     }

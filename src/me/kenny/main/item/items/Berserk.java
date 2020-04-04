@@ -3,6 +3,7 @@ package me.kenny.main.item.items;
 import me.kenny.main.Main;
 import me.kenny.main.item.SpecialItem;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Damageable;
@@ -12,6 +13,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -45,6 +47,7 @@ public class Berserk extends SpecialItem {
                 addHealth(player, heartsGained);
 
                 player.getWorld().playSound(player.getLocation(), Sound.EXPLODE, 1, 0);
+                player.getWorld().playEffect(player.getLocation(), Effect.EXPLOSION_HUGE, 1);
                 deductItem(player, event.getItem());
             }
         }
@@ -57,6 +60,16 @@ public class Berserk extends SpecialItem {
 
     @Override
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
+
+    }
+
+    @Override
+    public void onProjectileHit(ProjectileHitEvent event) {
+
+    }
+
+    @Override
+    public void onFish(PlayerFishEvent event) {
 
     }
 

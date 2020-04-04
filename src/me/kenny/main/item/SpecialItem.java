@@ -6,9 +6,11 @@ import me.kenny.main.util.TimeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -19,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public abstract class SpecialItem {
-    private Main main;
+    public Main main;
     private String name;
     private ItemStack item;
     private int cooldown;
@@ -49,6 +51,8 @@ public abstract class SpecialItem {
     public abstract void onInteract(PlayerInteractEvent event);
     public abstract void onDamage(EntityDamageByEntityEvent event);
     public abstract void onProjectileLaunch(ProjectileLaunchEvent event);
+    public abstract void onProjectileHit(ProjectileHitEvent event);
+    public abstract void onFish(PlayerFishEvent event);
 
     public String getName() { return name; }
     public ItemStack getItem() {
@@ -60,7 +64,7 @@ public abstract class SpecialItem {
     public boolean use(Player player, String message) {
         String formattedCooldownString = name.toLowerCase().replace(" ", "");
         if (!main.getCooldownConfig().isOnCooldown(player, formattedCooldownString)) {
-            player.sendMessage(ChatColor.GRAY + "[" + ChatColor.GOLD + name + ChatColor.GRAY + "] " + ChatColor.GREEN + message);
+            player.sendMessage(ChatColor.GRAY + "[" + ChatColor.GOLD + name + ChatColor.GRAY + "] " + ChatColor.GOLD + message);
             main.getCooldownConfig().addCooldown(player, name.toLowerCase().replace(" ", ""), cooldown);
             return true;
         } else {

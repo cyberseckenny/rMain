@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
@@ -27,6 +28,16 @@ public class TeleportStar extends SpecialItem {
 
     @Override
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
+
+    }
+
+    @Override
+    public void onProjectileHit(ProjectileHitEvent event) {
+
+    }
+
+    @Override
+    public void onFish(PlayerFishEvent event) {
 
     }
 }

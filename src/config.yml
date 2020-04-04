@@ -20,7 +20,7 @@ items:
     name: 'Cobweb Gun'
     description:
       - 'Fires a web into the distance.'
-    cooldown: 60
+    cooldown: 180
     uses: -1
     material: DIAMOND_BARDING
   armor_swapper_axe:
