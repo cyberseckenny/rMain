@@ -19,6 +19,7 @@ public class LootboxGui implements Gui {
         this.main = main;
     }
 
+    @Override
     public Inventory getGui() {
         int size = 54;
         // won't place borders if the index is one of these

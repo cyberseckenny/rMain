@@ -7,7 +7,9 @@ import me.kenny.main.util.Info;
 import net.minecraft.util.org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -92,6 +94,22 @@ public class MainCommand implements CommandExecutor  {
                     case "viewloot":
                         player.openInventory(new LootTableGui(main).getGui());
                         break;
+                    case "addcrate":
+                        if (args.length >= 2) {
+                            Block block = player.getTargetBlock(null, 5);
+                            if (block != null && block.getType() == Material.CHEST || block.getType() == Material.ENDER_CHEST) {
+                                if (main.getCrateConfig().addCrate(args[1], block.getLocation(), false)) {
+                                    player.sendMessage(Info.crate(main, "Sucessfully added " + ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', args[1]) + ChatColor.RESET + ChatColor.WHITE + " crate!"));
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "A crate with that location already exists!");
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.RED + "You must be facing a chest or enderchest!");
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.RED + "You must specify a name for the crate!");
+                        }
+                        break;
                     case "reload":
                         main.setupConfig();
                         player.sendMessage(Info.main(main, "Reloaded configs."));
@@ -103,11 +121,6 @@ public class MainCommand implements CommandExecutor  {
             }
         }
         return true;
-    }
-
-    public void openLootGui(Player player, String title) {
-        Inventory inventory = Bukkit.createInventory(null, 36, title);
-        player.openInventory(inventory);
     }
 
     // checks if the string equals true or false
@@ -126,6 +139,9 @@ public class MainCommand implements CommandExecutor  {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main addLoot <true/false> &eAdds your current held item to the loot table. If true, the item will be considered rare and if used in lootboxes it will only appear in the ender chest."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main removeLoot &eRemoves your current held item from the loot table. NOTE: The item must be identical to the item in the loot table."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main viewLoot &eViews the current loot table. You can also add and remove items from the loot table by dragging and dropping items from the gui."));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main addCrate <name> &eCreates a new crate at the chest you are facing."));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main modifyCrate &eModifies the crate you are currently facing."));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main removeCrate &eRemoves the crate you are currently facing."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main reload &eReloads plugin config files."));
         player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + StringUtils.repeat("-", 40));
     }

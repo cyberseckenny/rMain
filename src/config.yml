@@ -13,7 +13,7 @@ items:
     name: 'Grappler'
     description:
       - 'Launches you in the direction you are facing.'
-    cooldown: 15
+    cooldown: 80
     uses: -1
     material: FISHING_ROD
   cobweb_gun:
@@ -27,7 +27,7 @@ items:
   armor_swapper_axe:
     name: 'Armor Swapper Axe'
     description:
-      - 'Removes the helmet off of a player.'
+      - 'Removes the helmet off a player.'
     cooldown: 180
     uses: -1
     material: GOLD_AXE
@@ -44,7 +44,7 @@ items:
     description:
       - 'Grants you strength, resistance, and'
       - 'heals you.'
-    cooldown: 300
+    cooldown: 1800
     uses: 1
     material: DIAMOND
 

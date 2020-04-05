@@ -13,6 +13,7 @@ public class SpecialItemGui implements Gui {
         this.main = main;
     }
 
+    @Override
     public Inventory getGui() {
         Inventory inventory = Bukkit.createInventory(null, 9, "Special Items");
         for (SpecialItem specialItem : main.getSpecialItemHandler().getSpecialItems()) {

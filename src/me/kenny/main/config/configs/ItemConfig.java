@@ -15,11 +15,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class GuiConfig extends Config {
-    private EditingPlayerHandler.EditingType editingType;
-    private Gui gui;
+public abstract class ItemConfig extends Config {
+    public EditingPlayerHandler.EditingType editingType;
+    public Gui gui;
 
-    public GuiConfig(Main main, String name, EditingPlayerHandler.EditingType editingType, Gui gui) {
+    public ItemConfig(Main main, String name, EditingPlayerHandler.EditingType editingType, Gui gui) {
         super(main, name);
 
         this.editingType = editingType;
@@ -58,6 +58,29 @@ public abstract class GuiConfig extends Config {
         return -1;
     }
 
+
+    public Map<ItemStack, DoubleValue> getItems() {
+        Map<ItemStack, DoubleValue> loot = new HashMap<ItemStack, DoubleValue>();
+        for (String path : getFileConfiguration().getKeys(false)) {
+            FileConfiguration configuration = getFileConfiguration();
+            ConfigurationSection configurationSection = getFileConfiguration().getConfigurationSection(path + ".item");
+            Map<String, Object> section = getFileConfiguration().getConfigurationSection(path + ".item").getValues(false);
+            ItemStack item = ItemStack.deserialize(section);
+            boolean rare = getFileConfiguration().getBoolean(path + ".rare");
+            loot.put(item, new DoubleValue(Integer.parseInt(path), rare));
+        }
+        return loot;
+    }
+
+    public boolean hasIdenticalItem(ItemStack item) {
+        for (Map.Entry<ItemStack, DoubleValue> loot : getItems().entrySet()) {
+            if (loot.getKey().isSimilar(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // gets the first available key in the config
     public Integer getFirstAvailableKey(String path) {
         int lastKey = 0;
@@ -76,30 +99,8 @@ public abstract class GuiConfig extends Config {
         return lastKey + 1;
     }
 
-    public Map<ItemStack, DoubleValue> getLoot() {
-        Map<ItemStack, DoubleValue> loot = new HashMap<ItemStack, DoubleValue>();
-        for (String path : getFileConfiguration().getKeys(false)) {
-            FileConfiguration configuration = getFileConfiguration();
-            ConfigurationSection configurationSection = getFileConfiguration().getConfigurationSection(path + ".item");
-            Map<String, Object> section = getFileConfiguration().getConfigurationSection(path + ".item").getValues(false);
-            ItemStack item = ItemStack.deserialize(section);
-            boolean rare = getFileConfiguration().getBoolean(path + ".rare");
-            loot.put(item, new DoubleValue(Integer.parseInt(path), rare));
-        }
-        return loot;
-    }
-
-    public boolean hasIdenticalItem(ItemStack item) {
-        for (Map.Entry<ItemStack, DoubleValue> loot : getLoot().entrySet()) {
-            if (loot.getKey().isSimilar(item)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     // reorganizes the config from least to greatest.
-    private void reorganize(String path) {
+    public void reorganize(String path) {
         Map<Integer, Map<String, Object>> sections = new HashMap<>();
 
         for (String key : getFileConfiguration().getConfigurationSection(path).getKeys(false)) {
@@ -122,13 +123,13 @@ public abstract class GuiConfig extends Config {
         save();
     }
 
-    private void updateGui(EditingPlayerHandler.EditingType editingType, Gui gui) {
+    public void updateGui(EditingPlayerHandler.EditingType editingType, Gui gui) {
         for (Player player : main.getEditingPlayerHandler().getEditing(editingType)) {
             player.getOpenInventory().getTopInventory().setContents(gui.getGui().getContents());
         }
     }
 
-    private void clearConfig(String path) {
+    public void clearConfig(String path) {
         for (String key : getFileConfiguration().getConfigurationSection(path).getKeys(false)) {
             getFileConfiguration().set(key, null);
         }

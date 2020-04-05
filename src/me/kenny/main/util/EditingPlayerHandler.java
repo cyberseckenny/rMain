@@ -36,7 +36,8 @@ public class EditingPlayerHandler implements Listener {
     }
 
     public enum EditingType {
-        LOOT_TABLE_GUI(LootTableGui.inventoryTitle);
+        LOOT_TABLE_GUI(LootTableGui.inventoryTitle),
+        CRATE_GUI("Crate");
 
         private String inventoryTitle;
 
@@ -54,7 +55,7 @@ public class EditingPlayerHandler implements Listener {
     public void onInventoryClose(InventoryCloseEvent event) {
         Inventory inventory = event.getInventory();
         for (EditingType editingType : EditingType.values()) {
-            if (editingType.getInventoryTitle().equals(inventory.getName())) {
+            if (editingType.getInventoryTitle().endsWith(inventory.getName())) {
                 Player player = (Player) event.getPlayer();
                 if (editing.get(editingType).contains(player))
                     editing.get(editingType).remove(player);
@@ -67,7 +68,7 @@ public class EditingPlayerHandler implements Listener {
     public void onInventoryOpen(InventoryOpenEvent event) {
         Inventory inventory = event.getInventory();
         for (EditingType editingType : EditingType.values()) {
-            if (editingType.getInventoryTitle().equals(inventory.getName())) {
+            if (editingType.getInventoryTitle().endsWith(inventory.getName())) {
                 Player player = (Player) event.getPlayer();
                 editing.get(editingType).add(player);
             }

@@ -2,6 +2,7 @@ package me.kenny.main.item.items;
 
 import me.kenny.main.Main;
 import me.kenny.main.item.SpecialItem;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -40,7 +41,7 @@ public class Grappler extends SpecialItem {
     @Override
     public void onFish(PlayerFishEvent event) {
         Player player = event.getPlayer();
-        String message = "Used grappler!";
+        String message = "Used " + ChatColor.GREEN + getName() + ChatColor.GOLD + "!";
         if (use(player, message)) {
             player.setVelocity(event.getHook().getVelocity().multiply(1.3).setY(0.45));
         }

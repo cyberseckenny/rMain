@@ -5,7 +5,11 @@ import org.bukkit.ChatColor;
 
 public class Info {
     public static String lootboxes(Main main, String message) {
-        return ChatColor.GRAY + "[" + ChatColor.RESET + main.getLootboxName() + ChatColor.RESET + ChatColor.GRAY + "] " + ChatColor.RESET + message;
+        return ChatColor.GRAY + "[" + ChatColor.RED + "Lootboxes" + ChatColor.RESET + ChatColor.GRAY + "] " + ChatColor.RESET + message;
+    }
+
+    public static String crate(Main main, String message) {
+        return ChatColor.GRAY + "[" + ChatColor.RED + "Crates" + ChatColor.GRAY + "] " + ChatColor.RESET + message;
     }
 
     public static String main(Main main, String message) {

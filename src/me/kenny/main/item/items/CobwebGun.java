@@ -32,7 +32,7 @@ public class CobwebGun extends SpecialItem {
     public void onInteract(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Player player = event.getPlayer();
-            String fired = "Fired " + ChatColor.GREEN +  getName() + ChatColor.GOLD + ". Upon spawning, webs will be removed in " + ChatColor.GREEN + "10 seconds" + ChatColor.GOLD + ".";
+            String fired = "Fired " + ChatColor.GREEN +  getName() + ChatColor.GOLD + ". Upon spawning, webs will be removed in " + ChatColor.GREEN + "6 seconds" + ChatColor.GOLD + ".";
             if (use(player, fired)) {
                 Arrow arrow = player.launchProjectile(Arrow.class);
             }
@@ -80,10 +80,11 @@ public class CobwebGun extends SpecialItem {
             @Override
             public void run() {
                 for (Block block : remove) {
-                    block.setType(Material.AIR);
+                    if (block.getType() == Material.WEB)
+                        block.setType(Material.AIR);
                 }
             }
-        }, 200L);
+        }, 120L);
     }
 
     @Override

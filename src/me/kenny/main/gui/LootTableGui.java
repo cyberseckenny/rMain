@@ -21,9 +21,10 @@ public class LootTableGui implements Gui {
         this.main = main;
     }
 
+    @Override
     public Inventory getGui() {
         Inventory inventory = Bukkit.createInventory(null, 54, inventoryTitle);
-        for (Map.Entry<ItemStack, DoubleValue> loot : main.getLootConfig().getLoot().entrySet()) {
+        for (Map.Entry<ItemStack, DoubleValue> loot : main.getLootConfig().getItems().entrySet()) {
             // inventories start 0, keys start at 1
             int key = loot.getValue().getInteger() - 1;
             boolean rare = loot.getValue().getBoolean();

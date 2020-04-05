@@ -60,7 +60,6 @@ public class LootTableListener implements Listener {
                         int key = main.getLootConfig().removeItem(item, "");
                         String name = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : ChatColor.RED + item.getType().toString();
                         player.sendMessage(Info.main(main, "Successfully removed " + name + ChatColor.RESET + " from loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + "."));
-                        player.getInventory().addItem(item);
                     }
                 } else {
                     event.setCancelled(true);

@@ -42,7 +42,7 @@ public abstract class SpecialItem {
             lore.add(ChatColor.translateAlternateColorCodes('&', "&f" + string));
         }
         String formattedCooldown = TimeUtils.getFormattedTimeWithoutZeroes(cooldown);
-        lore.addAll(Arrays.asList("", ChatColor.GRAY + "" + ChatColor.ITALIC + "Cooldown: " + formattedCooldown, ChatColor.GRAY + "" + ChatColor.ITALIC + "Uses: " + usesString));
+        lore.addAll(Arrays.asList(" ", ChatColor.GRAY + "" + ChatColor.ITALIC + "Cooldown: " + formattedCooldown, ChatColor.GRAY + "" + ChatColor.ITALIC + "Uses: " + usesString));
         meta.setLore(lore);
         item.setItemMeta(meta);
         this.item = item;

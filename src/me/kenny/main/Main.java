@@ -1,8 +1,12 @@
 package me.kenny.main;
 
+import me.kenny.main.command.ItemCommand;
 import me.kenny.main.command.MainCommand;
 import me.kenny.main.config.configs.CooldownConfig;
+import me.kenny.main.config.configs.CrateConfig;
 import me.kenny.main.config.configs.LootConfig;
+import me.kenny.main.crate.Crate;
+import me.kenny.main.crate.CrateListener;
 import me.kenny.main.item.SpecialItemHandler;
 import me.kenny.main.lootbox.LootTableListener;
 import me.kenny.main.lootbox.LootboxListener;
@@ -26,6 +30,7 @@ public class Main extends JavaPlugin {
 
     private LootConfig lootConfig;
     private CooldownConfig cooldownConfig;
+    private CrateConfig crateConfig;
     private EditingPlayerHandler editingPlayerHandler;
     private SpecialItemHandler specialItemHandler;
 
@@ -37,13 +42,16 @@ public class Main extends JavaPlugin {
 
         lootConfig = new LootConfig(this);
         cooldownConfig = new CooldownConfig(this);
+        crateConfig = new CrateConfig(this);
         editingPlayerHandler = new EditingPlayerHandler();
         specialItemHandler = new SpecialItemHandler(this);
 
         Bukkit.getPluginManager().registerEvents(new LootboxListener(this), this);
         Bukkit.getPluginManager().registerEvents(new LootTableListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new CrateListener(this), this);
         Bukkit.getPluginManager().registerEvents(editingPlayerHandler, this);
         Bukkit.getPluginManager().registerEvents(specialItemHandler, this);
+        Bukkit.getPluginManager().registerEvents(new ItemCommand(), this);
 
         Bukkit.getPluginCommand("main").setExecutor(new MainCommand(this));
     }
@@ -59,6 +67,8 @@ public class Main extends JavaPlugin {
     public LootConfig getLootConfig() { return lootConfig; }
 
     public CooldownConfig getCooldownConfig() { return cooldownConfig; }
+
+    public CrateConfig getCrateConfig() { return crateConfig; }
 
     public EditingPlayerHandler getEditingPlayerHandler() { return editingPlayerHandler; }
 
