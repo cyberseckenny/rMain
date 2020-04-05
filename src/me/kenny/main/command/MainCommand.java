@@ -1,6 +1,7 @@
 package me.kenny.main.command;
 
 import me.kenny.main.Main;
+import me.kenny.main.gkit.Gkit;
 import me.kenny.main.gui.SpecialItemGui;
 import me.kenny.main.gui.LootTableGui;
 import me.kenny.main.util.Info;
@@ -94,22 +95,33 @@ public class MainCommand implements CommandExecutor  {
                     case "viewloot":
                         player.openInventory(new LootTableGui(main).getGui());
                         break;
-                    case "addcrate":
-                        if (args.length >= 2) {
-                            Block block = player.getTargetBlock(null, 5);
-                            if (block != null && block.getType() == Material.CHEST || block.getType() == Material.ENDER_CHEST) {
-                                if (main.getCrateConfig().addCrate(args[1], block.getLocation(), false)) {
-                                    player.sendMessage(Info.crate(main, "Sucessfully added " + ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', args[1]) + ChatColor.RESET + ChatColor.WHITE + " crate!"));
-                                } else {
-                                    player.sendMessage(ChatColor.RED + "A crate with that location already exists!");
-                                }
+//                    case "addcrate":
+//                        if (args.length >= 2) {
+//                            Block block = player.getTargetBlock(null, 5);
+//                            if (block != null && block.getType() == Material.CHEST || block.getType() == Material.ENDER_CHEST) {
+//                                if (main.getCrateConfig().addCrate(args[1], block.getLocation(), false)) {
+//                                    player.sendMessage(Info.crate(main, "Sucessfully added " + ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', args[1]) + ChatColor.RESET + ChatColor.WHITE + " crate!"));
+//                                } else {
+//                                    player.sendMessage(ChatColor.RED + "A crate with that location already exists!");
+//                                }
+//                            } else {
+//                                player.sendMessage(ChatColor.RED + "You must be facing a chest or enderchest!");
+//                            }
+//                        } else {
+//                            player.sendMessage(ChatColor.RED + "You must specify a name for the crate!");
+//                        }
+//                        break;
+                    case "addgkit":
+                        if (args.length != 2) {
+                            if (args.length != 3) {
+
+                                Gkit gkit = new Gkit(player.getInventory().getContents(), player.getInventory().getArmorContents());
                             } else {
-                                player.sendMessage(ChatColor.RED + "You must be facing a chest or enderchest!");
+                                player.sendMessage(ChatColor.RED + "You must specify a gkit display name!");
                             }
                         } else {
-                            player.sendMessage(ChatColor.RED + "You must specify a name for the crate!");
+                            player.sendMessage(ChatColor.RED + "You must specify a gkit name!");
                         }
-                        break;
                     case "reload":
                         main.setupConfig();
                         player.sendMessage(Info.main(main, "Reloaded configs."));
@@ -139,10 +151,13 @@ public class MainCommand implements CommandExecutor  {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main addLoot <true/false> &eAdds your current held item to the loot table. If true, the item will be considered rare and if used in lootboxes it will only appear in the ender chest."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main removeLoot &eRemoves your current held item from the loot table. NOTE: The item must be identical to the item in the loot table."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main viewLoot &eViews the current loot table. You can also add and remove items from the loot table by dragging and dropping items from the gui."));
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main addCrate <name> &eCreates a new crate at the chest you are facing."));
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main modifyCrate &eModifies the crate you are currently facing."));
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main removeCrate &eRemoves the crate you are currently facing."));
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main reload &eReloads plugin config files."));
+        //player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main addCrate <name> &eCreates a new crate at the chest you are facing."));
+        //player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main modifyCrate &eModifies the crate you are currently facing."));
+        //player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main removeCrate &eRemoves the crate you are currently facing."));
+        //player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main reload &eReloads plugin config files."));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main addGkit <name> <displayName> &eAdds a new Gkit with your current armor and item contents. Name is what will be used when editing the gkit, and display name is the text that will be presented in the gui."));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main removeGkit <name> &eRemoves a gkit."));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main setGkit <name> &eSets the item and armor contents of the gkit to you inventory."));
         player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + StringUtils.repeat("-", 40));
     }
 }

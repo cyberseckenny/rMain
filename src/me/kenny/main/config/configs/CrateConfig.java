@@ -19,9 +19,6 @@ public class CrateConfig extends ItemConfig {
         if (getFileConfiguration().get(path) != null)
             return false;
 
-        // TODO: no more crates :)))))))))))))))))))))))
-        // TODO: do gkits
-
         int x = location.getBlockX();
         int y = location.getBlockY();
         int z = location.getBlockZ();

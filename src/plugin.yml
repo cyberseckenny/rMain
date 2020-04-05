@@ -5,3 +5,4 @@ main: me.kenny.main.Main
 version: 0.1
 commands:
   main:
+  gkit:

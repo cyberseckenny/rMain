@@ -1,6 +1,7 @@
 package me.kenny.main.gui;
 
 import me.kenny.main.Main;
+import me.kenny.main.util.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -28,23 +29,7 @@ public class LootboxGui implements Gui {
         // TODO: fix lootbox giving the same index as the last clicked chest and the ender chest
 
         Inventory gui = Bukkit.createInventory(null, size, main.getLootboxName());
-        ItemStack border = new ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.GRAY.getData());
-        ItemMeta borderItemMeta = border.getItemMeta();
-        borderItemMeta.setDisplayName(" ");
-        border.setItemMeta(borderItemMeta);
-
-        for (int i = 0; i < size; i++) {
-            boolean isCenter = false;
-            for (int x : center) {
-                if (x == i) {
-                    isCenter = true;
-                    break;
-                }
-            }
-
-            if (!isCenter)
-                gui.setItem(i, border);
-        }
+        InventoryUtils.setBorder(gui, size, center);
 
         ItemStack chest = new ItemStack(Material.CHEST);
         ItemMeta chestItemMeta = chest.getItemMeta();

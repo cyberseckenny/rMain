@@ -15,9 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import java.awt.*;
 
 public class ItemCommand implements Listener {
     @EventHandler
