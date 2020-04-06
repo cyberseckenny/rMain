@@ -15,4 +15,8 @@ public class Info {
     public static String main(Main main, String message) {
         return ChatColor.GRAY + "[" + ChatColor.RED + "Main" + ChatColor.GRAY + "] " + ChatColor.RESET + message;
     }
+
+    public static String gkit(Main main, String message) {
+        return ChatColor.GRAY + "[" + ChatColor.RED + "Gkits" + ChatColor.GRAY + "] " + ChatColor.RESET + message;
+    }
 }

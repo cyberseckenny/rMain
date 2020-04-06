@@ -35,7 +35,7 @@ public class LootboxListener implements Listener {
             Player player = event.getPlayer();
             ItemStack clicked = event.getItem();
             if (clicked != null && clicked.getItemMeta() != null && isLootbox(clicked.getItemMeta())) {
-                if (main.getLootConfig().getItems().size() < 10) {
+                if (main.getLootConfig().getItems("").size() < 10) {
                     if (player.hasPermission("main.modify"))
                         player.sendMessage(ChatColor.RED + "You must add at least 10 items to the loot table for lootboxes to function.");
                     event.setCancelled(true);
@@ -114,8 +114,7 @@ public class LootboxListener implements Listener {
     }
 
     public ItemStack[] getRandomLoot(int amount) {
-        List<ItemStack> loot = new ArrayList<>();
-        loot.addAll(main.getLootConfig().getItems().keySet());
+        List<ItemStack> loot = new ArrayList<>(main.getLootConfig().getItems("").keySet());
         Collections.shuffle(loot);
         ItemStack[] items = new ItemStack[amount];
         for (int i = 0; i < amount; i++)

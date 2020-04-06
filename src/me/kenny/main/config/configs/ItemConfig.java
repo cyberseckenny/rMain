@@ -5,6 +5,7 @@ import me.kenny.main.config.Config;
 import me.kenny.main.gui.Gui;
 import me.kenny.main.util.DoubleValue;
 import me.kenny.main.util.EditingPlayerHandler;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -28,24 +29,22 @@ public abstract class ItemConfig extends Config {
 
     public Integer addItem(ItemStack item, boolean rare, String path) {
         int nextKey = getFirstAvailableKey(path);
-        getFileConfiguration().set(Integer.valueOf(nextKey).toString() + ".item", item.serialize());
-        getFileConfiguration().set(Integer.valueOf(nextKey).toString() + ".rare", rare);
-        save();
+        if (item != null && item.getType() != Material.AIR) {
+            getFileConfiguration().set(path + "." + Integer.valueOf(nextKey).toString() + ".item", item.serialize());
+            getFileConfiguration().set(path + "." + Integer.valueOf(nextKey).toString() + ".rare", rare);
+            save();
 
-        reorganize(path);
-        updateGui(editingType, gui);
+            reorganize(path);
+            updateGui(editingType, gui);
 
-        return nextKey;
+            return nextKey;
+        }
+        return - 1;
     }
 
     public Integer removeItem(ItemStack item, String path) {
         for (String key : getFileConfiguration().getConfigurationSection(path).getKeys(false)) {
-            String section = null;
-            if (path == "") {
-                section = key;
-            } else {
-                section = path + "." + key;
-            }
+            String section = path.equals("") ? key : path + "." + key;
             ItemStack configItem = ItemStack.deserialize(getFileConfiguration().getConfigurationSection(section + ".item").getValues(true));
             if (configItem.isSimilar(item)) {
                 updateGui(editingType, gui);
@@ -59,21 +58,22 @@ public abstract class ItemConfig extends Config {
     }
 
 
-    public Map<ItemStack, DoubleValue> getItems() {
-        Map<ItemStack, DoubleValue> loot = new HashMap<ItemStack, DoubleValue>();
-        for (String path : getFileConfiguration().getKeys(false)) {
+    public Map<ItemStack, DoubleValue> getItems(String path) {
+        Map<ItemStack, DoubleValue> loot = new HashMap<>();
+        for (String key : getFileConfiguration().getKeys(false)) {
+            String p = path.equals("") ? key : path + "." + key;
             FileConfiguration configuration = getFileConfiguration();
-            ConfigurationSection configurationSection = getFileConfiguration().getConfigurationSection(path + ".item");
-            Map<String, Object> section = getFileConfiguration().getConfigurationSection(path + ".item").getValues(false);
+            ConfigurationSection configurationSection = getFileConfiguration().getConfigurationSection(p + ".item");
+            Map<String, Object> section = getFileConfiguration().getConfigurationSection(p + ".item").getValues(false);
             ItemStack item = ItemStack.deserialize(section);
-            boolean rare = getFileConfiguration().getBoolean(path + ".rare");
-            loot.put(item, new DoubleValue(Integer.parseInt(path), rare));
+            boolean rare = getFileConfiguration().getBoolean(p + ".rare");
+            loot.put(item, new DoubleValue(Integer.parseInt(p), rare));
         }
         return loot;
     }
 
-    public boolean hasIdenticalItem(ItemStack item) {
-        for (Map.Entry<ItemStack, DoubleValue> loot : getItems().entrySet()) {
+    public boolean hasIdenticalItem(ItemStack item, String path) {
+        for (Map.Entry<ItemStack, DoubleValue> loot : getItems(path).entrySet()) {
             if (loot.getKey().isSimilar(item)) {
                 return true;
             }
@@ -84,10 +84,11 @@ public abstract class ItemConfig extends Config {
     // gets the first available key in the config
     public Integer getFirstAvailableKey(String path) {
         int lastKey = 0;
-        Set<String> paths = getFileConfiguration().getKeys(false);
 
-        if (getFileConfiguration().getConfigurationSection(path).getKeys(false).isEmpty())
+        if (getFileConfiguration().getConfigurationSection(path) == null || getFileConfiguration().getConfigurationSection(path).getKeys(false).isEmpty())
             return 1;
+
+        Set<String> paths = path.equals("") ? getFileConfiguration().getKeys(false) : getFileConfiguration().getConfigurationSection(path).getKeys(false);
 
         int lastValue = Integer.parseInt((String) paths.toArray()[paths.size() - 1]);
         for (int i = 1; i < lastValue + 1; i++) {
@@ -103,8 +104,11 @@ public abstract class ItemConfig extends Config {
     public void reorganize(String path) {
         Map<Integer, Map<String, Object>> sections = new HashMap<>();
 
+        if (getFileConfiguration().getConfigurationSection(path) == null)
+            return;
+
         for (String key : getFileConfiguration().getConfigurationSection(path).getKeys(false)) {
-            sections.put(Integer.parseInt(key), getFileConfiguration().getConfigurationSection(key).getValues(true));
+            sections.put(Integer.parseInt(key), getFileConfiguration().getConfigurationSection(path + "." + key).getValues(true));
         }
 
         sections = sections.entrySet()
@@ -116,7 +120,7 @@ public abstract class ItemConfig extends Config {
 
         for (Map.Entry<Integer, Map<String, Object>> entry : sections.entrySet()) {
             for (Map.Entry<String, Object> value : entry.getValue().entrySet()) {
-                getFileConfiguration().set(entry.getKey() + "." + value.getKey(), value.getValue());
+                getFileConfiguration().set(path + "." + entry.getKey() + "." + value.getKey(), value.getValue());
             }
         }
 
@@ -124,6 +128,9 @@ public abstract class ItemConfig extends Config {
     }
 
     public void updateGui(EditingPlayerHandler.EditingType editingType, Gui gui) {
+        if (editingType == null)
+            return;
+
         for (Player player : main.getEditingPlayerHandler().getEditing(editingType)) {
             player.getOpenInventory().getTopInventory().setContents(gui.getGui().getContents());
         }

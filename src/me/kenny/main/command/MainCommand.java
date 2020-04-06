@@ -67,7 +67,7 @@ public class MainCommand implements CommandExecutor  {
                                 boolean rare = Boolean.parseBoolean(args[1]);
                                 ItemStack item = player.getInventory().getItemInHand();
 
-                                if (main.getLootConfig().hasIdenticalItem(item)) {
+                                if (main.getLootConfig().hasIdenticalItem(item, "")) {
                                     player.sendMessage(ChatColor.RED + "You can not add duplicates of an item to the loot table!");
                                 } else {
                                     int key = main.getLootConfig().addItem(item, rare, "");
@@ -95,33 +95,44 @@ public class MainCommand implements CommandExecutor  {
                     case "viewloot":
                         player.openInventory(new LootTableGui(main).getGui());
                         break;
-//                    case "addcrate":
-//                        if (args.length >= 2) {
-//                            Block block = player.getTargetBlock(null, 5);
-//                            if (block != null && block.getType() == Material.CHEST || block.getType() == Material.ENDER_CHEST) {
-//                                if (main.getCrateConfig().addCrate(args[1], block.getLocation(), false)) {
-//                                    player.sendMessage(Info.crate(main, "Sucessfully added " + ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', args[1]) + ChatColor.RESET + ChatColor.WHITE + " crate!"));
-//                                } else {
-//                                    player.sendMessage(ChatColor.RED + "A crate with that location already exists!");
-//                                }
-//                            } else {
-//                                player.sendMessage(ChatColor.RED + "You must be facing a chest or enderchest!");
-//                            }
-//                        } else {
-//                            player.sendMessage(ChatColor.RED + "You must specify a name for the crate!");
-//                        }
-//                        break;
-                    case "addgkit":
-                        if (args.length != 2) {
-                            if (args.length != 3) {
-
-                                Gkit gkit = new Gkit(player.getInventory().getContents(), player.getInventory().getArmorContents());
+                    case "addcrate":
+                        if (args.length >= 2) {
+                            Block block = player.getTargetBlock(null, 5);
+                            if (block != null && block.getType() == Material.CHEST || block.getType() == Material.ENDER_CHEST) {
+                                if (main.getCrateConfig().addCrate(args[1], block.getLocation(), false)) {
+                                    player.sendMessage(Info.crate(main, "Sucessfully added " + ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', args[1]) + ChatColor.RESET + ChatColor.WHITE + " crate!"));
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "A crate with that location already exists!");
+                                }
                             } else {
-                                player.sendMessage(ChatColor.RED + "You must specify a gkit display name!");
+                                player.sendMessage(ChatColor.RED + "You must be facing a chest or enderchest!");
                             }
                         } else {
-                            player.sendMessage(ChatColor.RED + "You must specify a gkit name!");
+                            player.sendMessage(ChatColor.RED + "You must specify a name for the crate!");
                         }
+                        break;
+                    case "addgkit":
+                        if (args.length == 1) {
+                            player.sendMessage(ChatColor.RED + "You must specify a name!");
+                        } else if (args.length == 2) {
+                            player.sendMessage(ChatColor.RED + "You must specify a kit display name!");
+                        } else {
+                            if (!isInventoryEmpty(player)) {
+                                if (!isArmorEmpty(player)) {
+                                    Gkit gkit = new Gkit(args[1], args[2], player.getInventory().getContents(), player.getInventory().getArmorContents());
+                                    if (main.getGkitConfig().addGkit(gkit)) {
+                                        player.sendMessage(Info.gkit(main, "Successfully added kit " + ChatColor.RED + gkit.getName() + ChatColor.RESET + " (" + ChatColor.translateAlternateColorCodes('&', gkit.getDisplayName()) + ChatColor.RESET + ")!"));
+                                    } else {
+                                        player.sendMessage(ChatColor.RED + "That kit already exists!");
+                                    }
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "Your must be wearing at least one piece of armor!");
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.RED + "Your inventory must have items in it!");
+                            }
+                        }
+                        break;
                     case "reload":
                         main.setupConfig();
                         player.sendMessage(Info.main(main, "Reloaded configs."));
@@ -137,7 +148,7 @@ public class MainCommand implements CommandExecutor  {
 
     // checks if the string equals true or false
     public boolean isBoolean(String string) {
-        if (string.equals("true") || string.equalsIgnoreCase("false"))
+        if (string.equals("true") || string.equals("false"))
             return true;
         return false;
     }
@@ -159,5 +170,21 @@ public class MainCommand implements CommandExecutor  {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main removeGkit <name> &eRemoves a gkit."));
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c/main setGkit <name> &eSets the item and armor contents of the gkit to you inventory."));
         player.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + StringUtils.repeat("-", 40));
+    }
+
+    public boolean isInventoryEmpty(Player player) {
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && item.getType() != Material.AIR)
+                return false;
+        }
+        return true;
+    }
+
+    public boolean isArmorEmpty(Player player) {
+        for (ItemStack item : player.getInventory().getArmorContents()) {
+            if (item != null && item.getType() != Material.AIR)
+                return false;
+        }
+        return true;
     }
 }

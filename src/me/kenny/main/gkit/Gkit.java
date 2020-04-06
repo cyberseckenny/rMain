@@ -9,12 +9,15 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class Gkit {
-    ItemStack[] items;
-    ItemStack[] armor;
+    private String name, displayName;
+    private ItemStack[] items;
+    private ItemStack[] armor;
 
-    public Gkit(ItemStack[] item, ItemStack[] armor) {
+    public Gkit(String name, String displayName, ItemStack[] items, ItemStack[] armor) {
         this.items = items;
         this.armor = armor;
+        this.name = name;
+        this.displayName = displayName;
     }
 
     public void giveGkit(Player player) {
@@ -62,9 +65,15 @@ public class Gkit {
         }
     }
 
-    public ItemStack[] getItems() {
-        return items;
+    public String getName() {
+        return name;
     }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public ItemStack[] getItems() { return items; }
 
     public ItemStack[] getArmor() {
         return armor;

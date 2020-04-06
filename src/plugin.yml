@@ -6,3 +6,5 @@ version: 0.1
 commands:
   main:
   gkit:
+  tpoffline:
+    aliases: [teleportoffline]

@@ -48,7 +48,7 @@ public class LootTableListener implements Listener {
                 if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY)  {
                     if (inventory instanceof CraftInventory && clickedInventory instanceof CraftInventoryPlayer) {
                         boolean rare = false;
-                        if (main.getLootConfig().hasIdenticalItem(item)) {
+                        if (main.getLootConfig().hasIdenticalItem(item, "")) {
                             player.sendMessage(ChatColor.RED + "You can not add duplicates of an item to the loot table!");
                             event.setCancelled(true);
                         } else {
