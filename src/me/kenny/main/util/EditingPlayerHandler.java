@@ -1,6 +1,8 @@
 package me.kenny.main.util;
 
+import me.kenny.main.Main;
 import me.kenny.main.gui.LootTableGui;
+import me.kenny.main.gui.RareLootTableGui;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,8 +18,9 @@ import java.util.Map;
 // stores who is editing in a gui
 public class EditingPlayerHandler implements Listener {
     private Map<EditingType, List<Player>> editing = new HashMap<>();
+    private Main main;
 
-    public EditingPlayerHandler() {
+    public EditingPlayerHandler(Main main) {
         for (EditingType type : EditingType.values()) {
             editing.put(type, new ArrayList<Player>());
         }
@@ -37,7 +40,8 @@ public class EditingPlayerHandler implements Listener {
 
     public enum EditingType {
         LOOT_TABLE_GUI(LootTableGui.inventoryTitle),
-        CRATE_GUI("Crate");
+        RARE_LOOT_TABLE_GUI(RareLootTableGui.inventoryTitle),
+        CRATE_GUI(" (currently editing)");
 
         private String inventoryTitle;
 
@@ -57,8 +61,11 @@ public class EditingPlayerHandler implements Listener {
         for (EditingType editingType : EditingType.values()) {
             if (editingType.getInventoryTitle().endsWith(inventory.getName())) {
                 Player player = (Player) event.getPlayer();
-                if (editing.get(editingType).contains(player))
+                if (editing.get(editingType).contains(player)) {
                     editing.get(editingType).remove(player);
+                    if (editingType == EditingType.CRATE_GUI)
+                        main.getCrateConfig().getCurrentCrate().remove(player);
+                }
             }
         }
     }
@@ -71,6 +78,8 @@ public class EditingPlayerHandler implements Listener {
             if (editingType.getInventoryTitle().endsWith(inventory.getName())) {
                 Player player = (Player) event.getPlayer();
                 editing.get(editingType).add(player);
+                if (editingType == EditingType.CRATE_GUI)
+                    main.getCrateConfig().getCurrentCrate().put(player, event.getInventory().getTitle());
             }
         }
     }

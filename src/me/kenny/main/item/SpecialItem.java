@@ -64,7 +64,7 @@ public abstract class SpecialItem {
     public boolean use(Player player, String message) {
         String formattedCooldownString = name.toLowerCase().replace(" ", "");
         if (!main.getCooldownConfig().isOnCooldown(player, formattedCooldownString)) {
-            player.sendMessage(ChatColor.GRAY + "[" + ChatColor.GOLD + name + ChatColor.GRAY + "] " + ChatColor.GOLD + message);
+            player.sendMessage(ChatColor.GOLD + message);
             main.getCooldownConfig().addCooldown(player, name.toLowerCase().replace(" ", ""), cooldown);
             return true;
         } else {

@@ -30,26 +30,28 @@ public class Berserk extends SpecialItem {
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            int heartsGained = 4;
-            int strengthAmplifier = 1;
-            int resistanceAmplifier = 1;
-            int effectLength = 10;
-            String message = ChatColor.GOLD + "You have gone berserk and gained " +
-                    ChatColor.GREEN + heartsGained + " hearts" + ChatColor.GOLD + ", " +
-                    ChatColor.GREEN + "Strength " + strengthAmplifier + ChatColor.GOLD + ", and " +
-                    ChatColor.GREEN + "Resistance " + resistanceAmplifier + ChatColor.GOLD + " " +
-                    ChatColor.GOLD + "for " + ChatColor.GREEN + effectLength + " seconds" + ChatColor.GOLD + "!";
-            if (use(player, message)) {
-                PotionEffect strength = new PotionEffect(PotionEffectType.INCREASE_DAMAGE, effectLength * 20, strengthAmplifier - 1);
-                PotionEffect resistance = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, effectLength * 20, resistanceAmplifier - 1);
-                player.addPotionEffect(strength);
-                player.addPotionEffect(resistance);
-                addHealth(player, heartsGained);
+//            if (player.getHealth() <= 10) {
+                int strengthAmplifier = 1;
+                int resistanceAmplifier = 1;
+                int effectLength = 10;
+                String message = ChatColor.GOLD + "You have gone berserk and gained " + ChatColor.GREEN + "absorption" + ChatColor.GOLD + ", " +
+                        ChatColor.GREEN + "Strength " + strengthAmplifier + ChatColor.GOLD + ", and " +
+                        ChatColor.GREEN + "Resistance " + resistanceAmplifier + ChatColor.GOLD + " " +
+                        ChatColor.GOLD + "for " + ChatColor.GREEN + effectLength + " seconds" + ChatColor.GOLD + "!";
+                if (use(player, message)) {
+                    PotionEffect strength = new PotionEffect(PotionEffectType.INCREASE_DAMAGE, effectLength * 20, strengthAmplifier - 1);
+                    PotionEffect resistance = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, effectLength * 20, resistanceAmplifier - 1);
+                    player.addPotionEffect(strength);
+                    player.addPotionEffect(resistance);
+                    setHealth(player);
 
-                player.getWorld().playSound(player.getLocation(), Sound.EXPLODE, 1, 0);
-                player.getWorld().playEffect(player.getLocation(), Effect.EXPLOSION_HUGE, 1);
-                deductItem(player, event.getItem());
-            }
+                    player.getWorld().playSound(player.getLocation(), Sound.EXPLODE, 1, 0);
+                    player.getWorld().playEffect(player.getLocation(), Effect.EXPLOSION_HUGE, 1);
+                    deductItem(player, event.getItem());
+                }
+//            } else {
+//                player.sendMessage(ChatColor.RED + "You must be below half health!");
+//            }
         }
     }
 
@@ -73,11 +75,8 @@ public class Berserk extends SpecialItem {
 
     }
 
-    public void addHealth(Player player, int amount) {
-        Damageable d = (Damageable) player;
-        if (d.getHealth() + amount > 20)
-            player.setHealth(20);
-        else
-            player.setHealth(d.getHealth() + amount);
+    public void setHealth(Player player) {
+        player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 1800, 1));
+        player.setHealth(20);
     }
 }

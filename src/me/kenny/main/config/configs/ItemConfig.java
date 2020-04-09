@@ -2,6 +2,7 @@ package me.kenny.main.config.configs;
 
 import me.kenny.main.Main;
 import me.kenny.main.config.Config;
+import me.kenny.main.gui.CrateGui;
 import me.kenny.main.gui.Gui;
 import me.kenny.main.util.DoubleValue;
 import me.kenny.main.util.EditingPlayerHandler;
@@ -39,7 +40,7 @@ public abstract class ItemConfig extends Config {
 
             return nextKey;
         }
-        return - 1;
+        return -1;
     }
 
     public Integer removeItem(ItemStack item, String path) {
@@ -57,22 +58,35 @@ public abstract class ItemConfig extends Config {
         return -1;
     }
 
-
     public Map<ItemStack, DoubleValue> getItems(String path) {
         Map<ItemStack, DoubleValue> loot = new HashMap<>();
-        for (String key : getFileConfiguration().getKeys(false)) {
+
+        if (getFileConfiguration().getConfigurationSection(path) == null)
+            return loot;
+
+        for (String key : getFileConfiguration().getConfigurationSection(path).getKeys(false)) {
             String p = path.equals("") ? key : path + "." + key;
             FileConfiguration configuration = getFileConfiguration();
             ConfigurationSection configurationSection = getFileConfiguration().getConfigurationSection(p + ".item");
             Map<String, Object> section = getFileConfiguration().getConfigurationSection(p + ".item").getValues(false);
             ItemStack item = ItemStack.deserialize(section);
             boolean rare = getFileConfiguration().getBoolean(p + ".rare");
-            loot.put(item, new DoubleValue(Integer.parseInt(p), rare));
+            String[] split = p.split("\\.");
+            loot.put(item, new DoubleValue(Integer.parseInt(split[split.length - 1]), rare));
         }
         return loot;
     }
 
+    public ItemStack getItem(String path) {
+        ConfigurationSection configurationSection = getFileConfiguration().getConfigurationSection(path + ".item");
+        Map<String, Object> section = getFileConfiguration().getConfigurationSection(path + ".item").getValues(false);
+        ItemStack item = ItemStack.deserialize(section);
+        return item;
+    }
+
     public boolean hasIdenticalItem(ItemStack item, String path) {
+        if (getItems(path) == null)
+            return false;
         for (Map.Entry<ItemStack, DoubleValue> loot : getItems(path).entrySet()) {
             if (loot.getKey().isSimilar(item)) {
                 return true;
@@ -85,14 +99,14 @@ public abstract class ItemConfig extends Config {
     public Integer getFirstAvailableKey(String path) {
         int lastKey = 0;
 
-        if (getFileConfiguration().getConfigurationSection(path) == null || getFileConfiguration().getConfigurationSection(path).getKeys(false).isEmpty())
+        if (getFileConfiguration().getConfigurationSection(path) == null || getFileConfiguration().getConfigurationSection(path).getValues(false).isEmpty())
             return 1;
 
         Set<String> paths = path.equals("") ? getFileConfiguration().getKeys(false) : getFileConfiguration().getConfigurationSection(path).getKeys(false);
 
         int lastValue = Integer.parseInt((String) paths.toArray()[paths.size() - 1]);
         for (int i = 1; i < lastValue + 1; i++) {
-            if (!getFileConfiguration().contains(String.valueOf(i))) {
+            if (!getFileConfiguration().contains(path + "." + String.valueOf(i))) {
                 return i;
             }
             lastKey = i;
@@ -103,9 +117,6 @@ public abstract class ItemConfig extends Config {
     // reorganizes the config from least to greatest.
     public void reorganize(String path) {
         Map<Integer, Map<String, Object>> sections = new HashMap<>();
-
-        if (getFileConfiguration().getConfigurationSection(path) == null)
-            return;
 
         for (String key : getFileConfiguration().getConfigurationSection(path).getKeys(false)) {
             sections.put(Integer.parseInt(key), getFileConfiguration().getConfigurationSection(path + "." + key).getValues(true));
@@ -132,7 +143,11 @@ public abstract class ItemConfig extends Config {
             return;
 
         for (Player player : main.getEditingPlayerHandler().getEditing(editingType)) {
-            player.getOpenInventory().getTopInventory().setContents(gui.getGui().getContents());
+            if (editingType == EditingPlayerHandler.EditingType.CRATE_GUI) {
+                player.getOpenInventory().getTopInventory().setContents(new CrateGui(main, main.getCrateConfig().getCurrentCrate().get(player)).getGui().getContents());
+            } else {
+                player.getOpenInventory().getTopInventory().setContents(gui.getGui().getContents());
+            }
         }
     }
 

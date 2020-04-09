@@ -29,16 +29,6 @@ public class LootTableGui implements Gui {
             int key = loot.getValue().getInteger() - 1;
             boolean rare = loot.getValue().getBoolean();
             ItemStack item = loot.getKey();
-//            ItemMeta meta = item.getItemMeta();
-//
-//            List<String> lore = meta.getLore() != null ? meta.getLore() : new ArrayList<>();
-//            String rareString = rare == true ? ChatColor.GREEN + "" + rare : ChatColor.RED + "" + rare;
-//            lore.add(ChatColor.AQUA + "rare: " + rareString);
-//            meta.setLore(lore);
-//            item.setItemMeta(meta);
-
-            // TODO: rarity
-
             inventory.setItem(key, item);
         }
         return inventory;

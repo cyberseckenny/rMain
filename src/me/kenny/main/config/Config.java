@@ -57,4 +57,14 @@ public abstract class Config {
             e.printStackTrace();
         }
     }
+
+    public void reload() {
+        try {
+            fileConfiguration.load(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -10,6 +10,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.util.Vector;
 
 import java.util.List;
 
@@ -43,7 +44,9 @@ public class Grappler extends SpecialItem {
         Player player = event.getPlayer();
         String message = "Used " + ChatColor.GREEN + getName() + ChatColor.GOLD + "!";
         if (use(player, message)) {
-            player.setVelocity(event.getHook().getVelocity().multiply(1.3).setY(0.45));
+            Vector playerVector = player.getLocation().toVector();
+            Vector hookVector = event.getHook().getLocation().toVector();
+            player.setVelocity(hookVector.subtract(playerVector).multiply(0.3));
         }
     }
 }

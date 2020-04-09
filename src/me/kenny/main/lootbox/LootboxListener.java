@@ -36,15 +36,20 @@ public class LootboxListener implements Listener {
             ItemStack clicked = event.getItem();
             if (clicked != null && clicked.getItemMeta() != null && isLootbox(clicked.getItemMeta())) {
                 if (main.getLootConfig().getItems("").size() < 10) {
-                    if (player.hasPermission("main.modify"))
-                        player.sendMessage(ChatColor.RED + "You must add at least 10 items to the loot table for lootboxes to function.");
+                    player.sendMessage(ChatColor.RED + "You must add at least 10 items to the loot table for lootboxes to function.");
+                    event.setCancelled(true);
+                    return;
+                }
+
+                if (main.getRareLootConfig().getItems("").size() < 1) {
+                    player.sendMessage(ChatColor.RED + "You must have at least 1 rare item in the loot table for lootboxes to function!");
                     event.setCancelled(true);
                     return;
                 }
 
                 player.openInventory(new LootboxGui(main).getGui());
                 removeOne(player, clicked);
-                player.sendMessage(Info.lootboxes(main, "Opening lootbox."));
+                player.sendMessage(Info.lootboxes("Opening lootbox."));
                 event.setCancelled(true);
             }
         }
@@ -54,7 +59,9 @@ public class LootboxListener implements Listener {
     public void onLootboxOpen(InventoryOpenEvent event) {
         if (event.getInventory().getTitle().equalsIgnoreCase(main.getLootboxName())) {
             Player player = (Player) event.getPlayer();
-            lootboxStorage.put(player, new LootboxStorage(getRandomLoot(10)));
+            Map<ItemStack[], ItemStack> map = getRandomLoot(10);
+            ItemStack rare = map.values().iterator().next();
+            lootboxStorage.put(player, new LootboxStorage(rare, map.keySet().iterator().next()));
         }
     }
 
@@ -82,11 +89,15 @@ public class LootboxListener implements Listener {
                     addItem(player, event.getInventory(), item, event.getSlot());
                 } else if (clicked.getType() == Material.ENDER_CHEST) {
                     if (storage.isMaxed()) {
-                        item = storage.getRareItemStack();
+                        item = storage.getRare();
                         addItem(player, event.getInventory(), item, event.getSlot());
                         Bukkit.getScheduler().runTaskLater(main, new BukkitRunnable() {
                             @Override
                             public void run() {
+                                for (ItemStack item : storage.getItems()) {
+                                    giveItem(player, item);
+                                }
+                                giveItem(player, storage.getRare());
                                 player.getOpenInventory().close();
                             }
                         }, 40L);
@@ -101,7 +112,7 @@ public class LootboxListener implements Listener {
     public void addItem(Player player, Inventory inventory, ItemStack item, int slot) {
         String name = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : ChatColor.RED + String.valueOf(item.getType());
         inventory.setItem(slot, item);
-        player.sendMessage(Info.lootboxes(main, "Received " + ChatColor.RED + item.getAmount() + "x " + name + ChatColor.RESET + "."));
+        player.sendMessage(Info.lootboxes("Received " + ChatColor.RED + item.getAmount() + "x " + name + ChatColor.RESET + "."));
     }
 
     // only removes one from an
@@ -113,13 +124,18 @@ public class LootboxListener implements Listener {
         }
     }
 
-    public ItemStack[] getRandomLoot(int amount) {
+    public Map<ItemStack[], ItemStack> getRandomLoot(int amount) {
         List<ItemStack> loot = new ArrayList<>(main.getLootConfig().getItems("").keySet());
+        List<ItemStack> rare = new ArrayList<>(main.getRareLootConfig().getItems("").keySet());
         Collections.shuffle(loot);
+        Collections.shuffle(rare);
         ItemStack[] items = new ItemStack[amount];
         for (int i = 0; i < amount; i++)
             items[i] = loot.get(i);
-        return items;
+
+        Map<ItemStack[], ItemStack> map = new HashMap<>();
+        map.put(items, rare.get(0));
+        return map;
     }
 
     public boolean isLootbox(ItemMeta meta) {
@@ -131,5 +147,13 @@ public class LootboxListener implements Listener {
             }
         }
         return false;
+    }
+
+    public void giveItem(Player player, ItemStack item) {
+        if (player.getInventory().firstEmpty() == -1) {
+            player.getWorld().dropItemNaturally(player.getLocation(), item);
+        } else {
+            player.getInventory().addItem(item);
+        }
     }
 }

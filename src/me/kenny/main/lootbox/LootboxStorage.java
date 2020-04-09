@@ -9,21 +9,27 @@ import java.util.List;
 // stores the 10 items when a player opens a lootbox
 public class LootboxStorage {
     private ItemStack[] items;
+    private ItemStack rare;
     private int index = 0;
 
     // the last item must ALWAYS be the rare item
-    public LootboxStorage(ItemStack... items) {
+    public LootboxStorage(ItemStack rare, ItemStack... items) {
         this.items = items;
+        this.rare = rare;
     }
 
-    public ItemStack getRareItemStack() {
-        return items[items.length - 1];
+    public ItemStack getRare() {
+        return rare;
     }
 
     public ItemStack getNextItemStack() {
         int i = index;
         index++;
         return items[index];
+    }
+
+    public ItemStack[] getItems() {
+        return items;
     }
 
     public boolean isMaxed() {

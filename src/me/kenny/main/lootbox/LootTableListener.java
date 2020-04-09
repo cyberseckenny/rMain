@@ -26,21 +26,6 @@ public class LootTableListener implements Listener {
         if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
             Inventory inventory = event.getInventory();
             if (inventory.getTitle().equalsIgnoreCase(LootTableGui.inventoryTitle)) {
-//                // seperates the rare meta from the item so we can use it later
-//                ItemStack unseperatedItem = event.getCurrentItem();
-//                ItemStack item = unseperatedItem.clone();
-//
-//                if (unseperatedItem.getItemMeta() != null && unseperatedItem.getItemMeta().getLore() != null && !unseperatedItem.getItemMeta().getLore().isEmpty()) {
-//                    ItemMeta unseperatedMeta = unseperatedItem.getItemMeta();
-//                    for (int i = 0; i < unseperatedMeta.getLore().size() - 1; i++) {
-//                        if (unseperatedMeta.getLore().get(i).contains("rare")) {
-//                            item.getItemMeta().getLore().remove(i);
-//                        }
-//                    }
-//                }
-
-                // TODO: rarity
-
                 ItemStack item = event.getCurrentItem();
                 Inventory clickedInventory = event.getClickedInventory();
                 Player player = (Player) event.getWhoClicked();
@@ -54,12 +39,12 @@ public class LootTableListener implements Listener {
                         } else {
                             int key = main.getLootConfig().addItem(item, rare, "");
                             String name = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : ChatColor.RED + item.getType().toString();
-                            player.sendMessage(Info.main(main, "Successfully added " + name + ChatColor.RESET + " to loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + ". (rare: " + ChatColor.RED + rare + ChatColor.RESET + ")"));
+                            player.sendMessage(Info.main("Successfully added " + name + ChatColor.RESET + " to loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + ". (rare: " + ChatColor.RED + rare + ChatColor.RESET + ")"));
                         }
                     } else if (inventory instanceof CraftInventory && clickedInventory instanceof CraftInventory) {
                         int key = main.getLootConfig().removeItem(item, "");
                         String name = item.hasItemMeta() ? item.getItemMeta().getDisplayName() : ChatColor.RED + item.getType().toString();
-                        player.sendMessage(Info.main(main, "Successfully removed " + name + ChatColor.RESET + " from loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + "."));
+                        player.sendMessage(Info.main("Successfully removed " + name + ChatColor.RESET + " from loot.yml as key " + ChatColor.RED + key + ChatColor.WHITE + "."));
                     }
                 } else {
                     event.setCancelled(true);

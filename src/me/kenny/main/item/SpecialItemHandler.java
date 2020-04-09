@@ -40,6 +40,7 @@ public class SpecialItemHandler implements Listener {
                 for (String section : configuration.getKeys(false)) {
                     String name = configuration.getString(section + ".name");
                     List<String> description = configuration.getStringList(section + ".description");
+
                     int cooldown = configuration.getInt(section + ".cooldown");
                     int uses = configuration.getInt(section + ".uses");
                     Material material = Material.getMaterial(configuration.getString(section + ".material"));

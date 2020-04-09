@@ -25,6 +25,7 @@ public class CooldownConfig extends Config {
         return null;
     }
 
+
     public boolean isOnCooldown(Player player, String cooldown) {
         for (Map.Entry<String, Object> entry : getFileConfiguration().getValues(false).entrySet()) {
             if (entry.getKey().equals(player.getUniqueId().toString())) {
