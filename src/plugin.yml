@@ -1,12 +1,10 @@
-name: rMain
-description: Lootboxes, crates, and gkit plugin for HCRuins
+name: GalasticCore
+description: Galastic HCF Core plugin
 author: Kenny
-main: me.kenny.main.Main
+main: me.kenny.galastic.Galastic
 version: 0.1
 commands:
-  main:
-  gkit:
-    aliases: [gkits]
+  galastic:
   tpoffline:
     aliases: [teleportoffline]
   shortcut:
